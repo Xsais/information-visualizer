@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../res/css/lib/jquerym.min.css"/>
+    <script src="../res/js/lib/vibrant.js"></script>
+    <script src="../res/js/lib/jquery.min.js"></script>
+    <script src="../res/js/lib/jqery-mobile.min.js"></script>
+    <script src="../res/js/lib/chart.min.js"></script>
+    <link rel="stylesheet" href="../res/css/movies.css">
+    <script async defer src="../res/js/movies.js"></script>
+</head>
+<body>
+<div id="movies" data-role="page" data-title="movie visualizer">
+    <div data-role="header" data-position="fixed">
+        <h1>Movies</h1>
+    </div>
+    <div data-role="content">
+        <div class="info page" style="display: none">
+            <div class="data holder">
+                <canvas class="data show"></canvas>
+            </div>
+            <div class="holder general">
+                <div class="holder show">
+                    <img />
+                </div>
+                <div class="info show">
+                    <h2 class="title"></h2>
+                    <p class="description"></p>
+                </div>
+            </div>
+        </div>
+        <div class="display page">
+           <!-- <div class="ui-grid-a holder">
+                <div class="ui-grid-a image">
+                    <img src="https://image.tmdb.org/t/p/w500_and_h282_face/qYTIuJJ7fIehicAt3bl0vW70Sq6.jpg">
+                    <h3 class="title">The 100 (2014)</h3>
+                </div>
+                <div class="ui-grid-a image">
+                    <img src="https://image.tmdb.org/t/p/w500_and_h282_face/qYTIuJJ7fIehicAt3bl0vW70Sq6.jpg">
+                    <h3 class="title">The 100 (2014)</h3>
+                </div>
+            </div>
+            <div class="ui-grid-a holder">
+                <div class="ui-grid-c image">
+                    <img src="https://image.tmdb.org/t/p/w500_and_h282_face/qYTIuJJ7fIehicAt3bl0vW70Sq6.jpg">
+                    <h3 class="title">The 100 (2014)</h3>
+                </div>
+                <div class="ui-grid-c image">
+                    <img src="https://image.tmdb.org/t/p/w500_and_h282_face/qYTIuJJ7fIehicAt3bl0vW70Sq6.jpg">
+                    <h3 class="title">The 100 (2014)</h3>
+                </div>
+                <div class="ui-grid-c image">
+                    <img src="https://image.tmdb.org/t/p/w500_and_h282_face/qYTIuJJ7fIehicAt3bl0vW70Sq6.jpg">
+                    <h3 class="title">The 100 (2014)</h3>
+                </div>
+            </div>
+            <div class="ui-grid-a holder">
+                <div class="ui-grid-c image">
+                    <img src="https://image.tmdb.org/t/p/w500_and_h282_face/qYTIuJJ7fIehicAt3bl0vW70Sq6.jpg">
+                    <h3 class="title">The 100 (2014)</h3>
+                </div>
+                <div class="ui-grid-c image">
+                    <img src="https://image.tmdb.org/t/p/w500_and_h282_face/qYTIuJJ7fIehicAt3bl0vW70Sq6.jpg">
+                    <h3 class="title">The 100 (2014)</h3>
+                </div>
+                <div class="ui-grid-c image">
+                    <img src="https://image.tmdb.org/t/p/w500_and_h282_face/qYTIuJJ7fIehicAt3bl0vW70Sq6.jpg">
+                    <h3 class="title">The 100 (2014)</h3>
+                </div>
+            </div>
+            <div class="ui-grid-a holder">
+                <div class="ui-grid-c image">
+                    <img src="https://image.tmdb.org/t/p/w500_and_h282_face/qYTIuJJ7fIehicAt3bl0vW70Sq6.jpg">
+                    <h3 class="title">The 100 (2014)</h3>
+                </div>
+                <div class="ui-grid-c image">
+                    <img src="https://image.tmdb.org/t/p/w500_and_h282_face/qYTIuJJ7fIehicAt3bl0vW70Sq6.jpg">
+                    <h3 class="title">The 100 (2014)</h3>
+                </div>
+                <div class="ui-grid-c image">
+                    <img src="https://image.tmdb.org/t/p/w500_and_h282_face/qYTIuJJ7fIehicAt3bl0vW70Sq6.jpg">
+                    <h3 class="title">The 100 (2014)</h3>
+                </div>
+            </div>
+            <div class="ui-grid-a holder">
+                <div class="ui-grid-c image">
+                    <img src="https://image.tmdb.org/t/p/w500_and_h282_face/qYTIuJJ7fIehicAt3bl0vW70Sq6.jpg">
+                    <h3 class="title">The 100 (2014)</h3>
+                </div>
+                <div class="ui-grid-c image">
+                    <img src="https://image.tmdb.org/t/p/w500_and_h282_face/qYTIuJJ7fIehicAt3bl0vW70Sq6.jpg">
+                    <h3 class="title">The 100 (2014)</h3>
+                </div>
+                <div class="ui-grid-c image">
+                    <img src="https://image.tmdb.org/t/p/w500_and_h282_face/qYTIuJJ7fIehicAt3bl0vW70Sq6.jpg">
+                    <h3 class="title">The 100 (2014)</h3>
+                </div>
+            </div>
+            <div class="ui-grid-a holder">
+                <div class="ui-grid-c image">
+                    <img src="https://image.tmdb.org/t/p/w500_and_h282_face/qYTIuJJ7fIehicAt3bl0vW70Sq6.jpg">
+                    <h3 class="title">The 100 (2014)</h3>
+                </div>
+                <div class="ui-grid-c image">
+                    <img src="https://image.tmdb.org/t/p/w500_and_h282_face/qYTIuJJ7fIehicAt3bl0vW70Sq6.jpg">
+                    <h3 class="title">The 100 (2014)</h3>
+                </div>
+                <div class="ui-grid-c image">
+                    <img src="https://image.tmdb.org/t/p/w500_and_h282_face/qYTIuJJ7fIehicAt3bl0vW70Sq6.jpg">
+                    <h3 class="title">The 100 (2014)</h3>
+                </div>
+            </div>
+            <div class="ui-grid-a holder">
+                <div class="ui-grid-c image">
+                    <img src="https://image.tmdb.org/t/p/w500_and_h282_face/qYTIuJJ7fIehicAt3bl0vW70Sq6.jpg">
+                    <h3 class="title">The 100 (2014)</h3>
+                </div>
+                <div class="ui-grid-c image">
+                    <img src="https://image.tmdb.org/t/p/w500_and_h282_face/qYTIuJJ7fIehicAt3bl0vW70Sq6.jpg">
+                    <h3 class="title">The 100 (2014)</h3>
+                </div>
+                <div class="ui-grid-c image">
+                    <img src="https://image.tmdb.org/t/p/w500_and_h282_face/qYTIuJJ7fIehicAt3bl0vW70Sq6.jpg">
+                    <h3 class="title">The 100 (2014)</h3>
+                </div>
+            </div>-->
+        </div>
+    </div>
+</div>
+</body>
+</html>
