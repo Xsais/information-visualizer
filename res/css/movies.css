@@ -1,0 +1,257 @@
+div[data-role="header"] {
+
+    background-color: rgb(33, 33, 33) !important;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+div[data-role="header"] > div > img {
+
+    width: 7vh;
+    transform: translate(0, 35%);
+}
+
+div[data-role="header"] a {
+
+    margin: 0 2rem;
+    color: #FFFFFF !important;
+}
+
+div[data-role="header"] a:visited {
+
+    color: inherit;
+}
+
+div[data-role="content"] {
+
+    display: flex;
+    flex-flow: column;
+    margin: 0;
+    padding: 0;
+}
+
+div[data-role="content"] .holder.display {
+
+    display: flex;
+    cursor: pointer;
+}
+
+div[data-role="content"] .holder.display:last-child {
+
+    border-bottom: 1px solid #000000;
+}
+
+div[data-role="content"] .image {
+
+    position: relative;
+    width: 100%;
+    background-color: #000000;
+}
+
+@media only screen and (max-width: 600px) {
+
+    div[data-role="content"] .holder.display {
+
+        display: block;
+    }
+}
+
+div[data-role="content"] .image:hover {
+
+    transform: scale(0.99);
+}
+
+div[data-role="content"] {
+
+    border: 0;
+    position: relative;
+    border-left: 1px solid #000000;
+    width: 100%;
+    background-color: #000000;
+}
+
+div[data-role="content"] .image:last-child {
+
+    border-right: 1px solid #000000;
+}
+
+div[data-role="content"] .image > img {
+
+    height: 100%;
+    width: 100%;
+    display: block;
+}
+
+div[data-role="content"] .image > .title {
+
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.45);
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #FFFFFF;
+    padding: 0.9rem 0.5rem;
+    margin: 0;
+}
+
+div[data-role="content"] > .info.page {
+
+    padding-top: 25rem;
+    background-color: #FFFFFF;
+    flex-flow: column;
+    align-items: center;
+    position: relative;
+}
+
+div[data-role="content"] > .info.page .data.holder {
+
+    width: 65%;
+    position: absolute;
+    top: 0;
+    left: 100%;
+    transform: translate(-100%, 0);
+}
+
+div[data-role="content"] > .info.page .data.holder canvas {
+
+    max-width: 100%;
+    max-height: 100%;
+}
+
+div[data-role="content"] > .info.page .holder.show {
+
+    margin-top: -20.5vh;
+    transform: translate(0);
+}
+
+div[data-role="content"] > .info.page .holder.show img {
+
+    width: 10rem;
+}
+
+div[data-role="content"] > .info.page .holder.general {
+
+    display: flex;
+    width: 96.5%;
+}
+
+@media only screen and (max-width: 600px) {
+
+    div[data-role="content"] > .info.page .holder.general {
+
+        flex-flow: column;
+        align-items: center;
+    }
+
+    div[data-role="content"] > .info.page .holder.general .info.show {
+
+        display: flex;
+        justify-content: center;
+        flex-flow: column;
+        align-items: center;
+    }
+}
+
+div[data-role="content"] > .info.page .holder.general h2.title {
+
+    font-size: 1.5rem;
+    margin-left: 0.5rem;
+}
+
+div[data-role="content"] > .info.page .holder.general p.description {
+
+    text-align: justify-all;
+    margin-left: 1rem;
+    margin-right: 2rem;
+}
+
+div[data-role="content"] > .info.page > .info.list {
+
+    display: flex;
+    overflow: hidden;
+    flex-flow: wrap;
+    justify-content: center;
+    margin: -1rem;
+    width: 95%;
+}
+
+div[data-role="content"] > .info.page > .info.list .episode {
+
+    width: 12rem;
+    color: #FFFFFF;
+    position: relative;
+    margin: 1rem;
+}
+
+div[data-role="content"] > .info.page > .info.list .episode:hover:after, div[data-role="content"] > .info.page > .info.list .episode[data-state="selected"]:after {
+
+    position: absolute;
+    content: "Compare";
+    font-size: 2rem;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    background: rgba(117, 117, 117, 0.65);
+}
+
+div[data-role="content"] > .info.page > .info.list .episode:hover:before, div[data-role="content"] > .info.page > .info.list .episode[data-state="selected"]:before {
+
+    position: absolute;
+    content: " ";
+    z-index: 99;
+    top: 100%;
+    left: 100%;
+    transform: translate(-100%, -100%);
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: url(../icon/check_0.png) no-repeat 95% 92.5%;
+    cursor: pointer;
+}
+
+div[data-role="content"] > .info.page > .info.list .episode[data-state="selected"]:before {
+
+    background: url(../icon/check_1.png) no-repeat 95% 92.5%;
+}
+
+div[data-role="content"] > .info.page > .info.list .episode > .info.title  {
+
+
+    position: absolute;
+    padding: 0.5rem;
+    top: 100%;
+    background-color: rgba(0, 0, 0, 0.45);
+    transform: translate(0, -100%);
+}
+
+div[data-role="content"] > .info.page > .info.list .episode > .info.title > .air.date  {
+
+    font-size: 70%;
+}
+
+div[data-role="content"] > .info.page > .info.list .episode > .info.title > .air.date:before  {
+
+    content: ' - ';
+}
+
+div[data-role="content"] > .info.page .info.show .episode > .holder.image > img {
+
+    max-width: 100%;
+    max-height: 100%;
+}
+
+div[data-role="content"] > .info.page > .info.list .episode > .holder.image {
+
+    width: 100%;
+    height: 100%;
+}
