@@ -1,1 +1,10 @@
-.DS_Store
+# ignores everthing
+*
+
+# Except these files
+*.html?
+*.css
+*.php
+*.js
+
+*/*
