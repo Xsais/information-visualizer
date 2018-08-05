@@ -50,17 +50,14 @@ $(function () {
     pageContent = {
 
         canvas: new Chart($("div[data-role='content'] > .info.page .data.show")[0].getContext("2d"), {
-            // The type of chart we want to create
-            type: 'line',
 
-            // The data for our dataset
+            type: 'line',
             data: {
                 labels: [],
                 datasets: [
                     {
-                        label: "Rantings",
+                        label: "Ranting",
                         fill: false,
-                        backgroundColor: '#F44336',
                         data: []
                     }
                 ]
@@ -80,15 +77,13 @@ $(function () {
 
         pageContent.canvas.data.datasets[0].backgroundColor = swatches.Vibrant.getHex();
         pageContent.canvas.data.datasets[0].borderColor = swatches.Muted.getHex();
+
+        pageContent.canvas.update();
     });
 
     pageContent.posterContainer.on("click", function () {
 
         if (selectedShow.campared) {
-
-            pageContent.posterContainer.removeAttr("data-state");
-
-            selectedShow.campared = false;
 
             for (let seasonIndex = 0; seasonIndex < selectedShow.seasons.length; ++seasonIndex) {
 
@@ -96,10 +91,6 @@ $(function () {
             }
             return;
         }
-
-        pageContent.posterContainer.attr("data-state", "selected");
-
-        selectedShow.campared = true;
 
         for (let seasonIndex = 0; seasonIndex < selectedShow.seasons.length; ++seasonIndex) {
 
@@ -140,11 +131,13 @@ $(function () {
 
         if (movieContainer[0].scrollHeight != previousHeight) {
 
-            if (maxScrolled >= 0.50) {
+            if (maxScrolled >= 0.25) {
 
                 if (loadedPages != 3) {
 
-                    loadPage(loadedPages + 1);
+                    setTimeout(() => {
+                        loadPage(loadedPages + 1)
+                    }, 0, true);
                 }
 
                 maxScrolled = 0;
@@ -310,9 +303,14 @@ function requestPage() {
         return;
     }
 
-    selectedShow = movieData[pageIndex][movieIndex - (pageIndex * API_PER_PAGE)];
+    selectedShow = tmpShowCompare;
 
     seasonList.html("");
+
+    pageContent.canvas.data.labels = [];
+    pageContent.canvas.data.datasets[0].data = [];
+
+    selectedShow.compareCount = 0;
 
     async function loadSubPage(seasonIndex) {
 
@@ -332,11 +330,10 @@ function requestPage() {
                 toggleSeasonGraph(qDisplay.find(".info.title").text().replace(/[0-9]{4}(-[0-9]{2}){2}/g, "").match(/[0-9]+/g)[0] - 1, qDisplay);
             });
 
+            toggleSeasonGraph(seasonIndex, display, selectedShow.campared ? "selected" : "");
+
             seasonList.append(display);
         }
-
-        pageContent.canvas.data.labels = [];
-        pageContent.canvas.data.datasets[0].data = [];
 
         pageContent.poster.attr("src", `https://image.tmdb.org/t/p/w500${selectedShow.poster_path}`);
         pageContent.title.text(selectedShow.name);
@@ -377,9 +374,9 @@ function toggleSeasonGraph(seasonIndex, qDisplay, state) {
 
     qDisplay = qDisplay == undefined ? $(seasonList.find(".episode")[seasonIndex]) : qDisplay;
 
-    if (state != undefined ? (state == "selected" && !selectedShow.seasons[seasonIndex].active) : (state == "selected" || !selectedShow.seasons[seasonIndex].active)) {
+    if (state == "selected" || !selectedShow.seasons[seasonIndex].active) {
 
-        if (selectedShow.seasons[seasonIndex].active) {
+        if (state == undefined && selectedShow.seasons[seasonIndex].active) {
 
             return;
         }
@@ -387,6 +384,8 @@ function toggleSeasonGraph(seasonIndex, qDisplay, state) {
         qDisplay.attr("data-state", "selected");
 
         selectedShow.seasons[seasonIndex].active = true;
+
+        selectedShow.compareCount = selectedShow.compareCount == undefined ? 1 : selectedShow.compareCount + 1;
 
         if (selectedShow.seasons[seasonIndex].vote_average == undefined) {
 
@@ -406,11 +405,18 @@ function toggleSeasonGraph(seasonIndex, qDisplay, state) {
                 insertIndex = labelIndex + 1;
             }
         }
+
         pageContent.canvas.data.datasets[0].data.splice(insertIndex, 0, selectedShow.seasons[seasonIndex].vote_average);
         pageContent.canvas.data.labels.splice(insertIndex, 0, selectedShow.seasons[seasonIndex].name);
+
+        if (selectedShow.compareCount >= selectedShow.seasons.length) {
+
+            pageContent.posterContainer.attr("data-state", "selected");
+            selectedShow.campared = true;
+        }
     } else {
 
-        if (!selectedShow.seasons[seasonIndex].active) {
+        if (state == undefined && !selectedShow.seasons[seasonIndex].active) {
 
             return;
         }
@@ -418,6 +424,8 @@ function toggleSeasonGraph(seasonIndex, qDisplay, state) {
         qDisplay.removeAttr("data-state");
 
         selectedShow.seasons[seasonIndex].active = false;
+
+        selectedShow.compareCount = selectedShow.compareCount == undefined ? 0 : selectedShow.compareCount - 1;
 
         if (pageContent.canvas.data.labels == undefined) {
 
@@ -433,6 +441,12 @@ function toggleSeasonGraph(seasonIndex, qDisplay, state) {
 
                 break;
             }
+        }
+
+        if (selectedShow.compareCount == selectedShow.seasons.length - 1) {
+
+            pageContent.posterContainer.removeAttr("data-state");
+            selectedShow.campared = false;
         }
     }
 
