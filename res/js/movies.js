@@ -309,6 +309,7 @@ function requestPage() {
 
     pageContent.canvas.data.labels = [];
     pageContent.canvas.data.datasets[0].data = [];
+    pageContent.posterContainer.removeAttr("data-state");
 
     selectedShow.compareCount = 0;
 
@@ -374,7 +375,7 @@ function toggleSeasonGraph(seasonIndex, qDisplay, state) {
 
     qDisplay = qDisplay == undefined ? $(seasonList.find(".episode")[seasonIndex]) : qDisplay;
 
-    if (state == "selected" || !selectedShow.seasons[seasonIndex].active) {
+    if (state == "selected" || (state == undefined && !selectedShow.seasons[seasonIndex].active)) {
 
         if (state == undefined && selectedShow.seasons[seasonIndex].active) {
 
@@ -385,7 +386,7 @@ function toggleSeasonGraph(seasonIndex, qDisplay, state) {
 
         selectedShow.seasons[seasonIndex].active = true;
 
-        selectedShow.compareCount = selectedShow.compareCount == undefined ? 1 : selectedShow.compareCount + 1;
+        ++selectedShow.compareCount;
 
         if (selectedShow.seasons[seasonIndex].vote_average == undefined) {
 
@@ -425,7 +426,10 @@ function toggleSeasonGraph(seasonIndex, qDisplay, state) {
 
         selectedShow.seasons[seasonIndex].active = false;
 
-        selectedShow.compareCount = selectedShow.compareCount == undefined ? 0 : selectedShow.compareCount - 1;
+        if (selectedShow.compareCount > 0) {
+
+            --selectedShow.compareCount;
+        }
 
         if (pageContent.canvas.data.labels == undefined) {
 
