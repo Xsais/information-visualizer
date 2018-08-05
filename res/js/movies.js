@@ -72,6 +72,16 @@ $(function () {
         description: $("div[data-role='content'] .holder.general p.description")
     };
 
+    pageContent.poster[0].crossOrigin = "Anonymous";
+
+    pageContent.poster.on("load", function () {
+
+        let swatches = new Vibrant(pageContent.poster[0]).swatches();
+
+        pageContent.canvas.data.datasets[0].backgroundColor = swatches.Vibrant.getHex();
+        pageContent.canvas.data.datasets[0].borderColor = swatches.Muted.getHex();
+    });
+
     pageContent.posterContainer.on("click", function () {
 
         if (selectedShow.campared) {
