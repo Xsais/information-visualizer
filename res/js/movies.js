@@ -1,4 +1,6 @@
 /*!(function () {*/
+const API_KEY = "48180ed3f84ed2dc1ab61d9ab903405a";
+
 const API_PER_PAGE = 20;
 
 let movieData = [];
@@ -182,7 +184,7 @@ async function loadPage(page) {
 
     $.ajax({
 
-        url: `https://api.themoviedb.org/3/discover/tv?api_key=48180ed3f84ed2dc1ab61d9ab903405a&language=en-US&sort_by=popularity.desc&page=${page}&timezone=America%2FNew_York&include_null_first_air_dates=false`,
+        url: `https://api.themoviedb.org/3/discover/tv?api_key=${API_KEY}&language=en-US&sort_by=popularity.desc&page=${page}&timezone=America%2FNew_York&include_null_first_air_dates=false`,
         dataType: "JSON",
         success: data => {
 
@@ -350,7 +352,7 @@ function requestPage() {
 
             $.ajax({
 
-                url: `https://api.themoviedb.org/3/tv/${id}/season/${season}?api_key=48180ed3f84ed2dc1ab61d9ab903405a&language=en-US`,
+                url: `https://api.themoviedb.org/3/tv/${id}/season/${season}?api_key=${API_KEY}&language=en-US`,
                 dataType: "JSON",
                 success: (data) => {
 
@@ -453,5 +455,4 @@ function toggleSeasonGraph(seasonIndex, qDisplay, state) {
 
 }
 
-/*
-})();*/
+/*})();*/
