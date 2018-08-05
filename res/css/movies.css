@@ -102,20 +102,63 @@ div[data-role="content"] .image > .title {
 
 div[data-role="content"] > .info.page {
 
-    padding-top: 25rem;
+    padding-top: 35%;
     background-color: #FFFFFF;
     flex-flow: column;
     align-items: center;
     position: relative;
 }
 
+@media only screen and (max-width: 600px) {
+
+    div[data-role="content"] > .info.page {
+
+        padding-top: 25rem;
+    }
+}
+
+@media only screen and (max-width: 375px) {
+
+    div[data-role="content"] > .info.page {
+
+        padding-top: 25rem;
+    }
+}
+
 div[data-role="content"] > .info.page .data.holder {
 
     width: 65%;
     position: absolute;
-    top: 0;
-    left: 100%;
-    transform: translate(-100%, 0);
+    top: 2.5rem;
+    left: 70%;
+    transform: translate(-70%, -2.5%);
+}
+
+@media only screen and (max-width: 985px) {
+
+    div[data-role="content"] > .info.page .data.holder {
+
+        left: 80%;
+        transform: translate(-80%, -2.5%);
+    }
+}
+
+@media only screen and (max-width: 600px) {
+
+    div[data-role="content"] > .info.page .data.holder {
+
+        width: 22rem;
+        left: 50%;
+        transform: translate(-50%, -2.5%);
+    }
+}
+
+@media only screen and (max-width: 375px) {
+
+    div[data-role="content"] > .info.page .data.holder {
+
+        width: 100%;
+    }
 }
 
 div[data-role="content"] > .info.page .data.holder canvas {
@@ -126,8 +169,10 @@ div[data-role="content"] > .info.page .data.holder canvas {
 
 div[data-role="content"] > .info.page .holder.show {
 
-    transform: translate(0, -20.5vh);
+    height: fit-content;
+    transform: translate(0);
     cursor: pointer;
+    margin-top: -20.5vh;
 }
 
 div[data-role="content"] > .info.page .holder.show img {
@@ -177,7 +222,8 @@ div[data-role="content"] > .info.page > .info.list {
     overflow: hidden;
     flex-flow: wrap;
     justify-content: center;
-    margin: -1rem;
+    padding-bottom: 1rem;
+    padding-top: 0.5rem;
     width: 95%;
 }
 
@@ -186,7 +232,7 @@ div[data-role="content"] > .info.page > .info.list .episode {
     width: 12rem;
     color: #FFFFFF;
     position: relative;
-    margin: 1rem;
+    margin: 0.25rem;
 }
 
 div[data-role="content"] > .info.page > .info.list .episode:hover:after
@@ -209,7 +255,8 @@ div[data-role="content"] > .info.page > .info.list .episode:hover:after
 }
 
 div[data-role="content"] > .info.page .holder.show:hover:after
-, div[data-role="content"] > .info.page .holder.show[data-state="selected"]:after {
+, div[data-role="content"] > .info.page .holder.show[data-state="selected"]:after
+    > div[data-role="content"] > .info.page .holder.show img {
 
     content: "Compare All";
     font-size: 1.5rem;
