@@ -143,6 +143,8 @@ $(function () {
             }
         }
     });
+
+    requestPage();
 });
 
 window.addEventListener("unload", function () {
@@ -270,6 +272,11 @@ function requestPage() {
 
         movieContainer.css("display", "block");
         pageContainer.css("display", "none");
+
+        if (loadedPages == 0) {
+
+            loadPage(1);
+        }
         return;
     }
 
