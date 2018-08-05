@@ -331,7 +331,7 @@ function requestPage() {
                 toggleSeasonGraph(qDisplay.find(".info.title").text().replace(/[0-9]{4}(-[0-9]{2}){2}/g, "").match(/[0-9]+/g)[0] - 1, qDisplay);
             });
 
-            toggleSeasonGraph(seasonIndex, display, selectedShow.campared ? "selected" : "");
+            toggleSeasonGraph(seasonIndex, display, selectedShow.campared || selectedShow.seasons[seasonIndex].active ? "selected" : "");
 
             seasonList.append(display);
         }
