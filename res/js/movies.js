@@ -1,4 +1,4 @@
-/*!(function() {*/
+/*!(function () {*/
 const API_PER_PAGE = 20;
 
 let movieData = [];
@@ -76,7 +76,7 @@ $(function () {
         let swatches = new Vibrant(pageContent.poster[0]).swatches();
 
         pageContent.canvas.data.datasets[0].backgroundColor = swatches.Vibrant.getHex();
-        pageContent.canvas.data.datasets[0].borderColor = swatches.Muted.getHex();
+        pageContent.canvas.data.datasets[0].borderColor = swatches.LightVibrant.getHex();
 
         pageContent.canvas.update();
     });
@@ -315,26 +315,23 @@ function requestPage() {
 
     async function loadSubPage(seasonIndex) {
 
-        if (selectedShow.seasons[seasonIndex].poster_path != null) {
-
-            let display = $(`<div class='episode'>
+        let display = $(`<div class='episode'>
                                 <div class='holder image'>
                                     <img src='https://image.tmdb.org/t/p/w500${selectedShow.seasons[seasonIndex].poster_path}' />
                                 </div>
                                 <div class='info title'>${selectedShow.seasons[seasonIndex].name}<span class='air date'>${selectedShow.seasons[seasonIndex].air_date}</span></div>
                             </div>`);
 
-            display.on("click", async function () {
+        display.on("click", async function () {
 
-                let qDisplay = $(this);
+            let qDisplay = $(this);
 
-                toggleSeasonGraph(qDisplay.find(".info.title").text().replace(/[0-9]{4}(-[0-9]{2}){2}/g, "").match(/[0-9]+/g)[0] - 1, qDisplay);
-            });
+            toggleSeasonGraph(qDisplay.find(".info.title").text().replace(/[0-9]{4}(-[0-9]{2}){2}/g, "").match(/[0-9]+/g)[0] - 1, qDisplay);
+        });
 
-            toggleSeasonGraph(seasonIndex, display, selectedShow.campared || selectedShow.seasons[seasonIndex].active ? "selected" : "");
+        toggleSeasonGraph(seasonIndex, display, selectedShow.campared || selectedShow.seasons[seasonIndex].active ? "selected" : "");
 
-            seasonList.append(display);
-        }
+        seasonList.append(display);
 
         pageContent.poster.attr("src", `https://image.tmdb.org/t/p/w500${selectedShow.poster_path}`);
         pageContent.title.text(selectedShow.name);
@@ -456,4 +453,5 @@ function toggleSeasonGraph(seasonIndex, qDisplay, state) {
 
 }
 
-/*})();*/
+/*
+})();*/
