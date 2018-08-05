@@ -386,8 +386,6 @@ function toggleSeasonGraph(seasonIndex, qDisplay, state) {
 
         selectedShow.seasons[seasonIndex].active = true;
 
-        ++selectedShow.compareCount;
-
         if (selectedShow.seasons[seasonIndex].vote_average == undefined) {
 
             selectedShow.seasons[seasonIndex].vote_average = 0;
@@ -407,8 +405,12 @@ function toggleSeasonGraph(seasonIndex, qDisplay, state) {
             }
         }
 
-        pageContent.canvas.data.datasets[0].data.splice(insertIndex, 0, selectedShow.seasons[seasonIndex].vote_average);
-        pageContent.canvas.data.labels.splice(insertIndex, 0, selectedShow.seasons[seasonIndex].name);
+        if (selectedShow.seasons[seasonIndex].name != pageContent.canvas.data.labels[insertIndex]) {
+
+            pageContent.canvas.data.labels.splice(insertIndex, 0, selectedShow.seasons[seasonIndex].name);
+            pageContent.canvas.data.datasets[0].data.splice(insertIndex, 0, selectedShow.seasons[seasonIndex].vote_average);
+            ++selectedShow.compareCount;
+        }
 
         if (selectedShow.compareCount >= selectedShow.seasons.length) {
 
@@ -426,11 +428,6 @@ function toggleSeasonGraph(seasonIndex, qDisplay, state) {
 
         selectedShow.seasons[seasonIndex].active = false;
 
-        if (selectedShow.compareCount > 0) {
-
-            --selectedShow.compareCount;
-        }
-
         if (pageContent.canvas.data.labels == undefined) {
 
             return;
@@ -442,6 +439,7 @@ function toggleSeasonGraph(seasonIndex, qDisplay, state) {
 
                 pageContent.canvas.data.labels.splice(labelIndex, 1);
                 pageContent.canvas.data.datasets[0].data.splice(labelIndex, 1);
+                --selectedShow.compareCount;
 
                 break;
             }
