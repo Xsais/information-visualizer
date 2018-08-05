@@ -381,7 +381,7 @@ function requestPage() {
     pageContainer.css("display", "flex");
 
     // Gets the index of where the data for the page lives
-    let pageIndex = movieIndex / API_PER_PAGE;
+    let pageIndex = Math.floor(movieIndex / API_PER_PAGE);
 
     // Gets the show that the user requested
     let tmpShowCompare = movieData[pageIndex][movieIndex - (pageIndex * API_PER_PAGE)];
