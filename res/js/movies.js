@@ -21,6 +21,16 @@ let ready = false;
 
 let selectedShow = undefined;
 
+if (localStorage["movie-data"] && Storage) {
+
+    movieData = JSON.parse(localStorage["movie-data"]);
+
+    for (let movieIndex = 0; movieIndex < movieData[0].length; ++movieIndex) {
+
+        movieNameQuery[movieData[0][movieIndex].name.replace(/ |-/g, "").toLowerCase()] = movieIndex;
+    }
+}
+
 $(function () {
 
     let maxScrolled = 0;
@@ -56,32 +66,40 @@ $(function () {
                 ]
             }
         }),
+        posterContainer: $("div[data-role='content'] > .info.page .holder.show"),
         poster: $("div[data-role='content'] > .info.page .holder.show img"),
         title: $("div[data-role='content'] .holder.general h2.title"),
         description: $("div[data-role='content'] .holder.general p.description")
     };
 
-    if (localStorage["movie-data"] && Storage) {
+    pageContent.posterContainer.on("click", function () {
 
-        movieData = JSON.parse(localStorage["movie-data"]);
+        if (selectedShow.campared) {
 
-        for (let movieIndex = 0; movieIndex < movieData[0].length; ++movieIndex) {
+            pageContent.posterContainer.removeAttr("data-state");
 
-            movieNameQuery[movieData[0][movieIndex].name.replace(/ |-/g, "").toLowerCase()] = movieIndex;
+            selectedShow.campared = false;
+
+            for (let seasonIndex = 0; seasonIndex < selectedShow.seasons.length; ++seasonIndex) {
+
+                toggleSeasonGraph(seasonIndex, undefined, "");
+            }
+            return;
         }
-    }
+
+        pageContent.posterContainer.attr("data-state", "selected");
+
+        selectedShow.campared = true;
+
+        for (let seasonIndex = 0; seasonIndex < selectedShow.seasons.length; ++seasonIndex) {
+
+            toggleSeasonGraph(seasonIndex, undefined, "selected");
+        }
+    });
 
     loadPage(1).finally(() => {
 
         ready = true;
-    });
-
-    window.addEventListener("unload", function () {
-
-        if (Storage) {
-
-            localStorage["movie-data"] = JSON.stringify(movieData);
-        }
     });
 
     window.addEventListener("scroll", function () {
@@ -127,6 +145,14 @@ $(function () {
     });
 });
 
+window.addEventListener("unload", function () {
+
+    if (Storage) {
+
+        localStorage["movie-data"] = JSON.stringify(movieData);
+    }
+});
+
 window.addEventListener("hashchange", requestPage);
 
 async function loadPage(page) {
@@ -167,7 +193,7 @@ async function loadPage(page) {
 
 function writeHome(index) {
 
-    if (false&& loadedPages <= 0 && localStorage["movie-display"] != undefined) {
+    if (false && loadedPages <= 0 && localStorage["movie-display"] != undefined) {
 
         movieContainer.append(localStorage["movie-display"]);
 
@@ -286,60 +312,7 @@ function requestPage() {
 
                 let qDisplay = $(this);
 
-                let seasonIndex = qDisplay.find(".info.title").text().replace(/[0-9]{4}(-[0-9]{2}){2}/g, "").match(/[0-9]+/g)[0] - 1;
-
-                let season = selectedShow.seasons[seasonIndex];
-
-                if (qDisplay.attr("data-state") != undefined && qDisplay.attr("data-state") == "selected") {
-
-                    qDisplay.removeAttr("data-state");
-
-                    season.active = false;
-
-                    if (pageContent.canvas.data.labels == undefined) {
-
-                        return;
-                    }
-
-                    for (let labelIndex = 0; labelIndex < pageContent.canvas.data.labels.length; ++labelIndex) {
-
-                        if (pageContent.canvas.data.labels[labelIndex] == season.name) {
-
-                            pageContent.canvas.data.labels.splice(labelIndex, 1);
-                            pageContent.canvas.data.datasets[0].data.splice(labelIndex, 1);
-
-                            break;
-                        }
-                    }
-                } else {
-
-                    qDisplay.attr("data-state", "selected");
-
-                    season.active = true;
-
-                    if (season.vote_average == undefined) {
-
-                        season.vote_average = 0;
-                        for (let episodeIndex = 0; episodeIndex < season.episodes.length; ++episodeIndex) {
-
-                            season.vote_average += season.episodes[episodeIndex].vote_average;
-                        }
-                    }
-
-                    let insertIndex = 0;
-
-                    for (let labelIndex = 0; labelIndex < pageContent.canvas.data.labels.length; ++labelIndex) {
-
-                        if (seasonIndex > pageContent.canvas.data.labels[labelIndex].match(/[0-9]+/g)[0] - 1) {
-
-                            insertIndex = labelIndex + 1;
-                        }
-                    }
-                    pageContent.canvas.data.datasets[0].data.splice(insertIndex, 0, season.vote_average);
-                    pageContent.canvas.data.labels.splice(insertIndex, 0, season.name);
-                }
-
-                pageContent.canvas.update();
+                toggleSeasonGraph(qDisplay.find(".info.title").text().replace(/[0-9]{4}(-[0-9]{2}){2}/g, "").match(/[0-9]+/g)[0] - 1, qDisplay);
             });
 
             seasonList.append(display);
@@ -381,6 +354,73 @@ function requestPage() {
 
         loadSeason(selectedShow.id, 1);
     }
+}
+
+function toggleSeasonGraph(seasonIndex, qDisplay, state) {
+
+    qDisplay = qDisplay == undefined ? $(seasonList.find(".episode")[seasonIndex]) : qDisplay;
+
+    if (state != undefined ? (state == "selected" && !selectedShow.seasons[seasonIndex].active) : (state == "selected" || !selectedShow.seasons[seasonIndex].active)) {
+
+        if (selectedShow.seasons[seasonIndex].active) {
+
+            return;
+        }
+
+        qDisplay.attr("data-state", "selected");
+
+        selectedShow.seasons[seasonIndex].active = true;
+
+        if (selectedShow.seasons[seasonIndex].vote_average == undefined) {
+
+            selectedShow.seasons[seasonIndex].vote_average = 0;
+            for (let episodeIndex = 0; episodeIndex < selectedShow.seasons[seasonIndex].episodes.length; ++episodeIndex) {
+
+                selectedShow.seasons[seasonIndex].vote_average += selectedShow.seasons[seasonIndex].episodes[episodeIndex].vote_average;
+            }
+        }
+
+        let insertIndex = 0;
+
+        for (let labelIndex = 0; labelIndex < pageContent.canvas.data.labels.length; ++labelIndex) {
+
+            if (seasonIndex > pageContent.canvas.data.labels[labelIndex].match(/[0-9]+/g)[0] - 1) {
+
+                insertIndex = labelIndex + 1;
+            }
+        }
+        pageContent.canvas.data.datasets[0].data.splice(insertIndex, 0, selectedShow.seasons[seasonIndex].vote_average);
+        pageContent.canvas.data.labels.splice(insertIndex, 0, selectedShow.seasons[seasonIndex].name);
+    } else {
+
+        if (!selectedShow.seasons[seasonIndex].active) {
+
+            return;
+        }
+
+        qDisplay.removeAttr("data-state");
+
+        selectedShow.seasons[seasonIndex].active = false;
+
+        if (pageContent.canvas.data.labels == undefined) {
+
+            return;
+        }
+
+        for (let labelIndex = 0; labelIndex < pageContent.canvas.data.labels.length; ++labelIndex) {
+
+            if (pageContent.canvas.data.labels[labelIndex] == selectedShow.seasons[seasonIndex].name) {
+
+                pageContent.canvas.data.labels.splice(labelIndex, 1);
+                pageContent.canvas.data.datasets[0].data.splice(labelIndex, 1);
+
+                break;
+            }
+        }
+    }
+
+    pageContent.canvas.update();
+
 }
 
 /*})();*/

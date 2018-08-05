@@ -126,8 +126,8 @@ div[data-role="content"] > .info.page .data.holder canvas {
 
 div[data-role="content"] > .info.page .holder.show {
 
-    margin-top: -20.5vh;
-    transform: translate(0);
+    transform: translate(0, -20.5vh);
+    cursor: pointer;
 }
 
 div[data-role="content"] > .info.page .holder.show img {
@@ -189,7 +189,10 @@ div[data-role="content"] > .info.page > .info.list .episode {
     margin: 1rem;
 }
 
-div[data-role="content"] > .info.page > .info.list .episode:hover:after, div[data-role="content"] > .info.page > .info.list .episode[data-state="selected"]:after {
+div[data-role="content"] > .info.page > .info.list .episode:hover:after
+, div[data-role="content"] > .info.page > .info.list .episode[data-state="selected"]:after
+, div[data-role="content"] > .info.page .holder.show:hover:after
+, div[data-role="content"] > .info.page .holder.show[data-state="selected"]:after{
 
     position: absolute;
     content: "Compare";
@@ -198,13 +201,24 @@ div[data-role="content"] > .info.page > .info.list .episode:hover:after, div[dat
     left: 0;
     display: flex;
     justify-content: center;
+    color: #FFFFFF;
     align-items: center;
     width: 100%;
     height: 100%;
     background: rgba(117, 117, 117, 0.65);
 }
 
-div[data-role="content"] > .info.page > .info.list .episode:hover:before, div[data-role="content"] > .info.page > .info.list .episode[data-state="selected"]:before {
+div[data-role="content"] > .info.page .holder.show:hover:after
+, div[data-role="content"] > .info.page .holder.show[data-state="selected"]:after {
+
+    content: "Compare All";
+    font-size: 1.5rem;
+}
+
+div[data-role="content"] > .info.page > .info.list .episode:hover:before
+, div[data-role="content"] > .info.page > .info.list .episode[data-state="selected"]:before
+, div[data-role="content"] > .info.page .holder.show:hover:before
+, div[data-role="content"] > .info.page .holder.show[data-state="selected"]:before {
 
     position: absolute;
     content: " ";
@@ -219,7 +233,9 @@ div[data-role="content"] > .info.page > .info.list .episode:hover:before, div[da
     cursor: pointer;
 }
 
-div[data-role="content"] > .info.page > .info.list .episode[data-state="selected"]:before {
+div[data-role="content"] > .info.page > .info.list .episode[data-state="selected"]:before
+, div[data-role="content"] > .info.page .holder.show[data-state="selected"]:before
+{
 
     background: url(../icon/check_1.png) no-repeat 95% 92.5%;
 }
