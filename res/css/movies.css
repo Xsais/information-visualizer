@@ -50,6 +50,12 @@ div[data-role="content"] .holder.display:last-child {
     border-bottom: 1px solid #000000;
 }
 
+div[data-role="content"] .display.page[data-state="animate-left"] {
+
+    transform: translate(-100%, 0);
+    transition: 0.35s ease-in-out;
+}
+
 div[data-role="content"] .image {
 
     position: relative;
@@ -112,6 +118,12 @@ div[data-role="content"] > .info.page {
     flex-flow: column;
     align-items: center;
     position: relative;
+}
+
+div[data-role="content"] > .info.page[date-state="animate-right"] {
+
+    transform: translate(100%, 0);
+    transition: 0.35s ease-in-out;
 }
 
 @media only screen and (max-width: 600px) {

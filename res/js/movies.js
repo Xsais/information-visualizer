@@ -10,11 +10,14 @@ let movieNameQuery = {};
 // Stores the data to be used to draw and display the shows
 let movieData = [];
 
-// Stores the ammount of pages that have successfully been displayed to the user
+// Stores the amount of pages that have successfully been displayed to the user
 let loadedPages = 0;
 
 // Determines weather the app is ready to be used
 let ready = false;
+
+// The target of the currently played transition
+let transitionTarget = null;
 
 // Stores the show the user as selected
 let selectedShow = undefined;
@@ -62,6 +65,40 @@ $(function () {
     pageContainer = $("div[data-role='content'] > div.info.page");
 
     seasonList = $("div[data-role='content'] > .info.page > .info.list");
+
+    // When a "movie" has been swiped on requesting more information
+    movieContainer.on("transitionend", () => {
+
+        if (transitionTarget == null) {
+
+            return;
+        }
+
+        // Removes the animation from the container
+        movieContainer.removeAttr("data-state");
+
+        movieContainer.css("display", "none");
+        pageContainer.css("display", "flex");
+
+        transitionTarget = null;
+    });
+
+    // When the "movie" page has been swiped on requesting less information
+    pageContainer.on("transitionend", () => {
+
+        if (transitionTarget == null) {
+
+            return;
+        }
+
+        // Removes the animation from the container
+        pageContainer.removeAttr("date-state");
+
+        movieContainer.css("display", "block");
+        pageContainer.css("display", "none");
+
+        transitionTarget = null;
+    });
 
     // Sets up the chart that will be used to display the movie info
     pageContent = {
@@ -118,12 +155,6 @@ $(function () {
         }
     });
 
-    /*    // Loads the "movie" selection page asynchronously
-        loadPage(1).finally(() => {
-
-            ready = true;
-        });*/
-
     window.addEventListener("scroll", function () {
 
         if (!ready) {
@@ -175,7 +206,35 @@ $(function () {
     requestPage();
 });
 
-window.addEventListener("unload", function () {
+$(window).on("swiperight", function (args) {
+
+    if (selectedShow == null) {
+
+        return;
+    }
+
+    transitionTarget = $(args.target).parent();
+
+    window.location.hash = "";
+
+    pageContainer.attr("date-state", "animate-right");
+});
+
+$(window).on("swipeleft", function (args) {
+
+    if (selectedShow != null || $(window).width() > 600) {
+
+        return;
+    }
+
+    transitionTarget = $(args.target).parent();
+
+    window.location.hash = `#${transitionTarget.find(".title")[0].innerText.replace(/\([0-9]+\)/, "").trim().replace(/ +/g, "-")}`;
+
+    movieContainer.attr("data-state", "animate-left");
+});
+
+addEventListener("unload", function () {
 
     if (Storage) {
 
@@ -258,18 +317,12 @@ function writeHome(index) {
         // Adds all required events to each cached "movie"
         for (let movieIndex = 0; movieIndex < moviesDisplay.length; ++movieIndex) {
 
-            moviesDisplay[movieIndex].addEventListener("click", switchPage);
+            moviesDisplay[movieIndex].addEventListener("click", (args) => {
+
+                window.location.hash = `#${$(args.target.parentElement).find(".title")[0].innerText.replace(/\([0-9]+\)/, "").trim().replace(/ +/g, "-")}`;
+            });
         }
     } else {
-
-        /*        let pageRequest = window.location.hash.split("#")[1];
-
-                // Removes all hashes from the url
-                if (pageRequest != undefined) {
-
-                    window.location.hash = "";
-                    return;
-                }*/
 
         // Determines the amount of "movies" to draw per row
         const PER_PAGE = [2, 3];
@@ -303,7 +356,10 @@ function writeHome(index) {
             let movieBackDrop = $(`<div class='ui-grid-a image'></div>`);
 
             // Allows user to switch pages when the "movie" is clicked
-            movieBackDrop.on("click", switchPage);
+            movieBackDrop.on("click", (args) => {
+
+                window.location.hash = `#${$(args.target.parentElement).find(".title")[0].innerText.replace(/\([0-9]+\)/, "").trim().replace(/ +/g, "-")}`;
+            });
 
             // Appends the need html to display the "movie"
             movieBackDrop.html(`<img src=\"https://image.tmdb.org/t/p/w500${movieData[index][movieIndex].backdrop_path}\">
@@ -338,14 +394,6 @@ function writeHome(index) {
 }
 
 /**
- * Switches to hash to the desired page
- */
-function switchPage() {
-
-    window.location.hash = `#${$(this).find(".title")[0].innerText.replace(/\([0-9]+\)/, "").trim().replace(/ +/g, "-")}`;
-}
-
-/**
  * Request that a page for a specific "movie" be loaded from the current hash
  */
 
@@ -353,8 +401,14 @@ function requestPage() {
 
     if (window.location.hash == "") {
 
-        movieContainer.css("display", "block");
-        pageContainer.css("display", "none");
+        // Preload the page if the transition is still being played
+        if (transitionTarget == null || transitionTarget != null && $(window).width() > 600) {
+
+            movieContainer.css("display", "block");
+            pageContainer.css("display", "none");
+        }
+
+        selectedShow = null;
 
         if (loadedPages == 0) {
 
@@ -377,14 +431,18 @@ function requestPage() {
         return;
     }
 
-    movieContainer.css("display", "none");
-    pageContainer.css("display", "flex");
-
     // Gets the index of where the data for the page lives
     let pageIndex = Math.floor(movieIndex / API_PER_PAGE);
 
     // Gets the show that the user requested
     let tmpShowCompare = movieData[pageIndex][movieIndex - (pageIndex * API_PER_PAGE)];
+
+    // Preload the page if the transition is still being played
+    if (transitionTarget == null || transitionTarget != null && $(window).width() > 600) {
+
+        movieContainer.css("display", "none");
+        pageContainer.css("display", "flex");
+    }
 
     // Prevents page "reload" if already on the page
     if (tmpShowCompare == selectedShow) {
@@ -568,6 +626,7 @@ function toggleSeasonGraph(seasonIndex, qDisplay, state) {
             }
         }
 
+        // Deselects "compare all" if not all seasons are selected
         if (selectedShow.compareCount == selectedShow.seasons.length - 1) {
 
             pageContent.posterContainer.removeAttr("data-state");
