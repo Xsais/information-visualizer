@@ -117,6 +117,18 @@ $(function () {
                         data: []
                     }
                 ]
+            },
+            options: {
+                scales: {
+                    xAxes: [
+                        {
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Seasons'
+                            }
+                        }
+                    ]
+                }
             }
         }),
         posterContainer: $("div[data-role='content'] > .info.page .holder.show"),
@@ -353,9 +365,9 @@ function writeHome(index) {
             movieNameQuery[`${movieData[index][movieIndex].name.replace(/ |-/g, "").toLowerCase()}`] = indexOffset + movieIndex;
 
             // creates the holder of the "movie"
-            let movieBackDrop = $(`<div class='ui-grid-a image' ${movieData[index][movieIndex].backdrop_path == null 
-                                                                    ? "data-state='no-image'" 
-                                                                    : ""}></div>`);
+            let movieBackDrop = $(`<div class='ui-grid-a image' ${movieData[index][movieIndex].backdrop_path == null
+                ? "data-state='no-image'"
+                : ""}></div>`);
 
             // Allows user to switch pages when the "movie" is clicked
             movieBackDrop.on("click", (args) => {
@@ -364,9 +376,9 @@ function writeHome(index) {
             });
 
             // Appends the need html to display the "movie"
-            movieBackDrop.html(`<img ${movieData[index][movieIndex].backdrop_path == null 
-                                        ? ``
-                                        : `src=\"https://image.tmdb.org/t/p/w500${movieData[index][movieIndex].backdrop_path}\"`}>
+            movieBackDrop.html(`<img ${movieData[index][movieIndex].backdrop_path == null
+                ? ``
+                : `src=\"https://image.tmdb.org/t/p/w500${movieData[index][movieIndex].backdrop_path}\"`}>
                                 <h3 class=\"title\">
                                     ${movieData[index][movieIndex].name} (${movieData[index][movieIndex]
                 .first_air_date.split("-")[0]})
@@ -476,12 +488,12 @@ function requestPage() {
     async function loadSubPage(seasonIndex) {
 
         let display = $(`<div class='episode'>
-                                <div class='holder image'${selectedShow.seasons[seasonIndex].poster_path == null 
-                                                            ? "data-state=\"no-image\""
-                                                            : ""}>
+                                <div class='holder image'${selectedShow.seasons[seasonIndex].poster_path == null
+            ? "data-state=\"no-image\""
+            : ""}>
                                     <img ${selectedShow.seasons[seasonIndex].poster_path == null
-                                            ? ``
-                                            : `src=\"https://image.tmdb.org/t/p/w500${selectedShow.seasons[seasonIndex].poster_path}\"`}>
+            ? ``
+            : `src=\"https://image.tmdb.org/t/p/w500${selectedShow.seasons[seasonIndex].poster_path}\"`}>
                                 </div>
                                 <div class='info title'>${selectedShow.seasons[seasonIndex].name}<span class='air date'>${selectedShow.seasons[seasonIndex].air_date}</span></div>
                             </div>`);
@@ -585,16 +597,16 @@ function toggleSeasonGraph(seasonIndex, qDisplay, state) {
         // find the position in which to insert the graph data
         for (let labelIndex = 0; labelIndex < pageContent.canvas.data.labels.length; ++labelIndex) {
 
-            if (seasonIndex > pageContent.canvas.data.labels[labelIndex].match(/[0-9]+/g)[0] - 1) {
+            if (seasonIndex > pageContent.canvas.data.labels[labelIndex] - 1) {
 
                 insertIndex = labelIndex + 1;
             }
         }
 
         // Check if graph data is already present
-        if (selectedShow.seasons[seasonIndex].name != pageContent.canvas.data.labels[insertIndex]) {
+        if (seasonIndex + 1 != pageContent.canvas.data.labels[insertIndex]) {
 
-            pageContent.canvas.data.labels.splice(insertIndex, 0, selectedShow.seasons[seasonIndex].name);
+            pageContent.canvas.data.labels.splice(insertIndex, 0, seasonIndex + 1);
             pageContent.canvas.data.datasets[0].data.splice(insertIndex, 0, selectedShow.seasons[seasonIndex].vote_average);
             ++selectedShow.compareCount;
         }
@@ -624,7 +636,7 @@ function toggleSeasonGraph(seasonIndex, qDisplay, state) {
         // Find the position in which to delete the graph data
         for (let labelIndex = 0; labelIndex < pageContent.canvas.data.labels.length; ++labelIndex) {
 
-            if (pageContent.canvas.data.labels[labelIndex] == selectedShow.seasons[seasonIndex].name) {
+            if (pageContent.canvas.data.labels[labelIndex] == seasonIndex + 1) {
 
                 pageContent.canvas.data.labels.splice(labelIndex, 1);
                 pageContent.canvas.data.datasets[0].data.splice(labelIndex, 1);
