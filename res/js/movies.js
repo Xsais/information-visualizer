@@ -353,7 +353,9 @@ function writeHome(index) {
             movieNameQuery[`${movieData[index][movieIndex].name.replace(/ |-/g, "").toLowerCase()}`] = indexOffset + movieIndex;
 
             // creates the holder of the "movie"
-            let movieBackDrop = $(`<div class='ui-grid-a image'></div>`);
+            let movieBackDrop = $(`<div class='ui-grid-a image' ${movieData[index][movieIndex].backdrop_path == null 
+                                                                    ? "data-state='no-image'" 
+                                                                    : ""}></div>`);
 
             // Allows user to switch pages when the "movie" is clicked
             movieBackDrop.on("click", (args) => {
@@ -362,7 +364,9 @@ function writeHome(index) {
             });
 
             // Appends the need html to display the "movie"
-            movieBackDrop.html(`<img src=\"https://image.tmdb.org/t/p/w500${movieData[index][movieIndex].backdrop_path}\">
+            movieBackDrop.html(`<img ${movieData[index][movieIndex].backdrop_path == null 
+                                        ? ``
+                                        : `src=\"https://image.tmdb.org/t/p/w500${movieData[index][movieIndex].backdrop_path}\"`}>
                                 <h3 class=\"title\">
                                     ${movieData[index][movieIndex].name} (${movieData[index][movieIndex]
                 .first_air_date.split("-")[0]})
@@ -472,8 +476,12 @@ function requestPage() {
     async function loadSubPage(seasonIndex) {
 
         let display = $(`<div class='episode'>
-                                <div class='holder image'>
-                                    <img src='https://image.tmdb.org/t/p/w500${selectedShow.seasons[seasonIndex].poster_path}' />
+                                <div class='holder image'${selectedShow.seasons[seasonIndex].poster_path == null 
+                                                            ? "data-state=\"no-image\""
+                                                            : ""}>
+                                    <img ${selectedShow.seasons[seasonIndex].poster_path == null
+                                            ? ``
+                                            : `src=\"https://image.tmdb.org/t/p/w500${selectedShow.seasons[seasonIndex].poster_path}\"`}>
                                 </div>
                                 <div class='info title'>${selectedShow.seasons[seasonIndex].name}<span class='air date'>${selectedShow.seasons[seasonIndex].air_date}</span></div>
                             </div>`);
