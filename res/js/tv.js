@@ -420,6 +420,8 @@
 
                     ready = true;
                 });
+
+                document.title = "Tv Visualizer";
             }
             return;
         }
@@ -543,6 +545,8 @@
             // Start Recursively loading seasons
             loadSeason(selectedShow.id, 1);
         }
+
+        document.title = `Tv Visualizer - ${selectedShow.name}`;
     }
 
     /**
