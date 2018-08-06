@@ -1,9 +1,25 @@
+/**
+ * File: movies.js
+ * Assignment: Final Project
+ * Creation date: August 1, 2018
+ * Last Modified: August 6, 2018
+ * Description: Handles display and graphing of "movie" data
+ *
+ * GitHub Link: https://github.com/Xsais/information-visualizer/blob/master/res/js/movies.js
+ *
+ * Group Members:
+ *    - James Grau
+ *    - Bhavay Grover
+ *    - Nathaniel Primo
+ */
+
 // Stores the API key to be used for this section of the site
 const API_KEY = "48180ed3f84ed2dc1ab61d9ab903405a";
 
 // Stores the static value of amount of the show returned for each request to the API
 const API_PER_PAGE = 20;
 
+// Stores the maximum number of pages to load
 const MAX_PAGES = 100;
 
 // Used as a dictionary for the movie" name to it index within the app
@@ -319,93 +335,57 @@ async function loadPage(page) {
  */
 function writeHome(index) {
 
-    // Tries to get the get a copy of the previously loaded page (simulate  server side caching)
-    if (false && loadedPages <= 0 && localStorage["movie-display"] != undefined) {
+    // Determines the amount of "movies" to draw per row
+    const PER_PAGE = [2, 3];
 
-        movieContainer.append(localStorage["movie-display"]);
+    // The total amount of "movies" written to the DOM
+    let moviesDrawn = 0;
 
-        let moviesDisplay = $("div[data-role='content'] .image");
+    // Loads the container for a row of "movies"
+    let currentRow = $("<div class='ui-grid-a holder display'></div>");
 
-        // Adds all required events to each cached "movie"
-        for (let movieIndex = 0; movieIndex < moviesDisplay.length; ++movieIndex) {
+    // The offset in in order to reference the movie by index
+    const indexOffset = index * API_PER_PAGE;
 
-            moviesDisplay[movieIndex].addEventListener("click", (args) => {
+    for (let movieIndex = 0; movieIndex < movieData[index].length; ++movieIndex) {
 
-                window.location.hash = `#${$(args.target.parentElement).find(".title")[0].innerText.replace(/\([0-9]+\)/, "").trim().replace(/ +/g, "-")}`;
-            });
-        }
-    } else {
+        ++moviesDrawn;
 
-        // Determines the amount of "movies" to draw per row
-        const PER_PAGE = [2, 3];
+        // Stores the the index of the movie name
+        movieNameQuery[`${movieData[index][movieIndex].name.replace(/ |-/g, "").toLowerCase()}`] = indexOffset + movieIndex;
 
-        // The total amount of "movies" written to the DOM
-        let moviesDrawn = 0;
+        // creates the holder of the "movie"
+        let movieBackDrop = $(`<div class='ui-grid-a image' ${movieData[index][movieIndex].backdrop_path == null
+            ? "data-state='no-image'"
+            : ""}></div>`);
 
-        // Loads the container for a row of "movies"
-        let currentRow = $("<div class='ui-grid-a holder display'></div>");
+        // Allows user to switch pages when the "movie" is clicked
+        movieBackDrop.on("click", (args) => {
 
-        // Writes the container to the page "cache"
-        if (localStorage["movie-display"] == undefined) {
+            window.location.hash = `#${$(args.target.parentElement).find(".title")[0].innerText.replace(/\([0-9]+\)/, "").trim().replace(/ +/g, "-")}`;
+        });
 
-            localStorage["movie-display"] = "<div class='ui-grid-a holder display'>";
-        } else {
-
-            localStorage["movie-display"] += "<div class='ui-grid-a holder display'>";
-        }
-
-        // The offset in in order to reference the movie by index
-        const indexOffset = index * API_PER_PAGE;
-
-        for (let movieIndex = 0; movieIndex < movieData[index].length; ++movieIndex) {
-
-            ++moviesDrawn;
-
-            // Stores the the index of the movie name
-            movieNameQuery[`${movieData[index][movieIndex].name.replace(/ |-/g, "").toLowerCase()}`] = indexOffset + movieIndex;
-
-            // creates the holder of the "movie"
-            let movieBackDrop = $(`<div class='ui-grid-a image' ${movieData[index][movieIndex].backdrop_path == null
-                ? "data-state='no-image'"
-                : ""}></div>`);
-
-            // Allows user to switch pages when the "movie" is clicked
-            movieBackDrop.on("click", (args) => {
-
-                window.location.hash = `#${$(args.target.parentElement).find(".title")[0].innerText.replace(/\([0-9]+\)/, "").trim().replace(/ +/g, "-")}`;
-            });
-
-            // Appends the need html to display the "movie"
-            movieBackDrop.html(`<img ${movieData[index][movieIndex].backdrop_path == null
-                ? ``
-                : `src=\"https://image.tmdb.org/t/p/w500${movieData[index][movieIndex].backdrop_path}\"`}>
+        // Appends the need html to display the "movie"
+        movieBackDrop.html(`<img ${movieData[index][movieIndex].backdrop_path == null
+            ? ``
+            : `src=\"https://image.tmdb.org/t/p/w500${movieData[index][movieIndex].backdrop_path}\"`}>
                                 <h3 class=\"title\">
                                     ${movieData[index][movieIndex].name} (${movieData[index][movieIndex]
-                .first_air_date.split("-")[0]})
+            .first_air_date.split("-")[0]})
                                 </h3>`);
 
-            // Adds the "movie" display to the current "cache" of the page
-            localStorage["movie-display"] += `<div class='ui-grid-a image'>${movieBackDrop.html()}</div>`;
+        // Appends the "movie" to the current row
+        currentRow.append(movieBackDrop);
 
-            // Appends the "movie" to the current row
-            currentRow.append(movieBackDrop);
+        // Determines if a new row is to be drawn
+        if ((index != 0 || moviesDrawn <= PER_PAGE[0] ? moviesDrawn : moviesDrawn - PER_PAGE[0]) % (index == 0 && moviesDrawn <= PER_PAGE[0] ? PER_PAGE[0] : PER_PAGE[1]) == 0) {
 
-            // Determines if a new row is to be drawn
-            if ((index != 0 || moviesDrawn <= PER_PAGE[0] ? moviesDrawn : moviesDrawn - PER_PAGE[0]) % (index == 0 && moviesDrawn <= PER_PAGE[0] ? PER_PAGE[0] : PER_PAGE[1]) == 0) {
+            // Appends current row to the DOM
+            movieContainer.append(currentRow);
 
-                // Appends current row to the DOM
-                movieContainer.append(currentRow);
-
-                // Adds the end of the row the the "cache"
-                localStorage["movie-display"] += "</div><div class='ui-grid-a holder display'>";
-
-                // Creates a new row to be used
-                currentRow = $("<div class='ui-grid-a holder display'></div>");
-            }
+            // Creates a new row to be used
+            currentRow = $("<div class='ui-grid-a holder display'></div>");
         }
-
-        // Writes the end of the page to the saved "cache"
-        localStorage["movie-display"] += "</div>";
     }
 }
 
