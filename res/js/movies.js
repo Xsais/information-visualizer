@@ -17,6 +17,7 @@
  * Encapsulates the entire program
  *
  */
+
 !(function () {
 
     // Stores the API key to be used for this section of the site
@@ -240,9 +241,9 @@
         requestPage();
     });
 
-    $(window).on("swiperight", function (args) {
+    pageContainer.on("swiperight", function (args) {
 
-        if (selectedShow == null) {
+        if ($(window).width() > 600) {
 
             return;
         }
@@ -254,9 +255,9 @@
         pageContainer.attr("date-state", "animate-right");
     });
 
-    $(window).on("swipeleft", function (args) {
+    movieContainer.on("swipeleft", function (args) {
 
-        if (selectedShow != null || $(window).width() > 600) {
+        if ($(window).width() > 600) {
 
             return;
         }
