@@ -199,7 +199,7 @@ div[data-role="content"] > .info.page .data.holder canvas {
 
 div[data-role="content"] > .info.page .holder.show {
 
-    height: fit-content;
+    display: table;
     transform: translate(0);
     cursor: pointer;
     margin-top: -20.5vh;
@@ -208,6 +208,7 @@ div[data-role="content"] > .info.page .holder.show {
 div[data-role="content"] > .info.page .holder.show img {
 
     width: 10rem;
+    max-height: 100%;
 }
 
 div[data-role="content"] > .info.page .holder.general {
