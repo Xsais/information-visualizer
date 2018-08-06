@@ -4,6 +4,8 @@ const API_KEY = "48180ed3f84ed2dc1ab61d9ab903405a";
 // Stores the static value of amount of the show returned for each request to the API
 const API_PER_PAGE = 20;
 
+const MAX_PAGES = 100;
+
 // Used as a dictionary for the movie" name to it index within the app
 let movieNameQuery = {};
 
@@ -188,11 +190,9 @@ $(function () {
             // Loads a new page to the user once they have scrolled 25% of the page
             if (maxScrolled >= loadedPages * 0.05) {
 
-                if (loadedPages != 3) {
+                if (/* TODO: For debugging purposes only */ loadedPages != 3 && loadedPages <= MAX_PAGES) {
 
-                    setTimeout(() => {
-                        loadPage(loadedPages + 1)
-                    }, 0, true);
+                    loadPage(loadedPages + 1);
                 }
 
                 maxScrolled = 0;
