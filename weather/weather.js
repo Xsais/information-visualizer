@@ -1,5 +1,5 @@
 function intiMap() { } // global declaration because google maps js script looks for initMap() before document is ready
-
+function loadExtraInfo(){}
 
 $(document).ready(function () {
     // Add an action for handling page swipes
@@ -16,7 +16,6 @@ $(document).ready(function () {
         if (curPage == "weather" && direction == "left") {
             // Change the page to page 2
             $.mobile.navigate("#compare");
-            $('#searchbar1').val($('#searchbar').val());
         }
         if (curPage == 'compare' && direction == 'right') {
             $.mobile.navigate('#weather');
@@ -37,31 +36,75 @@ $(document).ready(function () {
 
     var lat;
     var long;
-    // writing the actul function
+    var s1loc;
+    var s2loc;
+    var s3loc;
+
     initMap = function () {
         updateColors();
+        
+        
         var autocomplete = new google.maps.places.Autocomplete(document.getElementById('searchbar'));
         google.maps.event.addListener(autocomplete, 'place_changed', () => {
             lat = autocomplete.getPlace().geometry.location.lat();
             long = autocomplete.getPlace().geometry.location.lng();
             loadWeather(lat, long);
         });
+
+        var s1autocomplete = new google.maps.places.Autocomplete(document.getElementById('searchbar1'));
+        google.maps.event.addListener(s1autocomplete, 'place_changed', () => {
+            lat = s1autocomplete.getPlace().geometry.location.lat();
+            long = s1autocomplete.getPlace().geometry.location.lng();
+            s1loc={lat, long};
+            compareNow();
+        });
+
+        var s2autocomplete = new google.maps.places.Autocomplete(document.getElementById('searchbar2'));
+        google.maps.event.addListener(s2autocomplete, 'place_changed', () => {
+            lat = s2autocomplete.getPlace().geometry.location.lat();
+            long = s2autocomplete.getPlace().geometry.location.lng();
+            s2loc={lat, long};
+            compareNow();
+        });
+
+        var s3autocomplete = new google.maps.places.Autocomplete(document.getElementById('searchbar3'));
+        google.maps.event.addListener(s3autocomplete, 'place_changed', () => {
+            lat = s3autocomplete.getPlace().geometry.location.lat();
+            long = s3autocomplete.getPlace().geometry.location.lng();
+            s3loc={lat, long};
+            compareNow();
+        });
     }
 
+    function compareNow(){
+        console.log({s1loc, s2loc, s3loc});
+        var ar = [s1loc, s2loc, s3loc];
+        var i=0;
+        ['searchbar1', 'searchbar2', 'searchbar3'].forEach((item)=>{
+            if($('#'+item).val()==''){
+                ar[i] = null;
+            }
+            i++;
+        });
+        var available = ar.filter((item)=>{
+            if(item!=null){
+                return item;
+            }
+        });
+        loadCompareChart(available);
+    }
+    $('#compareNow').click(compareNow);
+
     var weatherImagesIcons = {
-        'clouds': ['cloud.png', 'few_clouds.png'],
-        'extreme': ['clear.png', 'clear.png'],
-        'clear sky': ['clear.png', 'clear.png'],
-        'few clouds': ['cloud.png', 'few_clouds.png'],
-        'scattered clouds': ['cloud.png', 'few_clouds.png'],
-        'overcast clouds': ['cloud.png', 'few_clouds.png'],
-        'broken clouds': ['cloud.png', 'few_clouds.png'],
-        'shower rain': ['rain.png', 'rain.png'],
-        'light rain': ['rain.png', 'rain.png'],
-        'rain': ['rain.png', 'rain.png'],
-        'thunderstorm': ['rain.png', 'storm.png'],
-        'snow': ['snow.png', 'snow.png'],
-        'mist': ['cloud.png', 'mist.png']
+        '01': ['clear.png', 'clear.png'],
+        '02': ['cloud.png', 'few_clouds.png'],
+        '03': ['cloud.png', 'few_clouds.png'],
+        '04': ['cloud.png', 'few_clouds.png'],
+        '09': ['rain.png', 'rain.png'],
+        '10': ['rain.png', 'rain.png'],
+        '11': ['rain.png', 'storm.png'],
+        '13': ['snow.png', 'snow.png'],
+        '50': ['cloud.png', 'mist.png']
     }
 
     function loadWeather(lat, long) {
@@ -77,13 +120,14 @@ $(document).ready(function () {
             $('#description').text(description[0].toUpperCase() + description.slice(1));
             $('#temp').text(data['main']['temp']);
             var iconid = data['weather'][0]['icon'];
+            var iconindex=iconid.substring(0,2);
             var img = document.createElement('img');
 
             if (iconid[iconid.length - 1] == 'd') {
                 try {
-                    $('#weather').css('background-image', 'url("./images/backgrounds/day/' + weatherImagesIcons[data['weather'][0]['description']][0] + '")');
-                    $('#icon').attr('src', './images/icons/day/' + weatherImagesIcons[data['weather'][0]['description']][1]);
-                    img.setAttribute('src', "./images/backgrounds/day/" + weatherImagesIcons[data['weather'][0]['description']][0]);
+                    $('#weather').css('background-image', 'url("./images/backgrounds/day/' + weatherImagesIcons[iconindex][0] + '")');
+                    $('#icon').attr('src', './images/icons/day/' + weatherImagesIcons[iconindex][1]);
+                    img.setAttribute('src', "./images/backgrounds/day/" + weatherImagesIcons[iconindex][0]);
                 } catch (e) {
                     $('#weather').css('background-image', 'url("./images/backgrounds/day/clear.png")');
                     $('#icon').attr('src', './images/icons/day/clear.png');
@@ -91,9 +135,9 @@ $(document).ready(function () {
                 }
             } else {
                 try {
-                    $('#weather').css('background-image', 'url("./images/backgrounds/night/' + weatherImagesIcons[data['weather'][0]['description']][0] + '")');
-                    $('#icon').attr('src', './images/icons/night/' + weatherImagesIcons[data['weather'][0]['description']][1]);
-                    img.setAttribute('src', "./images/backgrounds/night/" + weatherImagesIcons[data['weather'][0]['description']][0]);
+                    $('#weather').css('background-image', 'url("./images/backgrounds/night/' + weatherImagesIcons[iconindex][0] + '")');
+                    $('#icon').attr('src', './images/icons/night/' + weatherImagesIcons[iconindex][1]);
+                    img.setAttribute('src', "./images/backgrounds/night/" + weatherImagesIcons[iconindex][0]);
                 } catch (e) {
                     $('#weather').css('background-image', 'url("./images/backgrounds/night/clear.png")');
                     $('#icon').attr('src', './images/icons/night/clear.png');
@@ -101,23 +145,49 @@ $(document).ready(function () {
                 }
             }
 
+            var extrainfo = [data.clouds.all, data.main.humidity, data.wind.speed, data.main.pressure, data.sys.sunrise, data.sys.sunset];
+            console.log('EXTRA INFO', extrainfo);
+            $('#clouds').text(extrainfo[0]+'%');
+            $('#humidity').text(extrainfo[1] + '%');
+            $('#wind').text('Speed - '+extrainfo[2]);
+            $('#pressure').text(extrainfo[3] + 'hpa');
+            $('#sunrise').text(new Date(extrainfo[4]).toTimeString().slice(0,5));
+            $('#sunset').text(new Date(extrainfo[5]).toTimeString().slice(0, 5));
+
             img.addEventListener('load', function () {
                 var vibrant = new Vibrant(img);
                 var swatches = vibrant.swatches();
                 console.log(swatches);
                 // $('#chart').css('background-color', swatches['Vibrant'].getHex());
                 $('#header').css('background-color', swatches['Vibrant'].getHex());
+                $('#extrainfo').css('color', swatches['DarkVibrant'].getHex());
+                // $('tr:nth-child(even)').css('background-color', swatches['LightVibrant'].getHex())
                 $('#compare').css('background-color', swatches['Vibrant'].getHex());
                 $('#cheader').css('background-color', swatches['Vibrant'].getHex());
+                $('.extracompareinfo').css('color', swatches['DarkVibrant'].getHex());
+                window.swatchcolor = swatches['DarkVibrant'].getHex();
             });
             loadChart(lat, long);
         });
     }
 
+    function nextFiveDays() {
+        var ar = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+        var today = new Date().getDay();
+        var nextDays = [];
+        for (i = today + 1; i <= 7; i++) {
+            nextDays.push(ar[i - 1]);
+        }
+        for (j = 1; j < today; j++) {
+            nextDays.push(ar[j - 1]);
+        }
+        nextDays.length = 5;
+        return nextDays;
+    }
     function loadChart(lat, long) {
         // $('#chart').css('background-color', 'white')
         $.getJSON('http://api.openweathermap.org/data/2.5/forecast?lat=' + lat + '&lon=' + long + '&appid=337f84fa35fa79d1a7e6bdfa3a1003ac&units=metric', {}, function (data) {
-            console.log(data);
+            console.log('COMPARE DATA', data);
             var wholedata = data.list;
             var fivedaydata = [];
             var comingweek = [];
@@ -132,12 +202,12 @@ $(document).ready(function () {
                 type: 'line',
                 defaultFontColor: 'green',
                 data: {
-                    labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+                    labels: nextFiveDays(),
                     datasets: [
                         {
                             label: 'Temperature',
                             data: fivedaydata,
-                            borderColor: 'red',
+                            borderColor: $('#extrainfo').css('color'),
                             fill: false
                         }]
                 },
@@ -159,5 +229,104 @@ $(document).ready(function () {
         });
     }
 
+
+    function loadCompareChart(data_ar){
+        $('#cchart').css('display', 'block');
+        console.log('DATA_AR: ', data_ar, typeof data_ar);
+        var dataset=[];
+        var linecolors=['red', 'green', 'blue'];
+        var ctx = document.getElementById('comparechart').getContext('2d');
+        console.log('FINAL DATASET: ', dataset, typeof dataset);
+        var chart = new Chart(ctx, {
+            type: 'line',
+            defaultFontColor: 'green',
+            data: {
+                labels: nextFiveDays(),
+                datasets: []
+            }
+        });
+        var colorindex=0;
+        data_ar.forEach((item)=>{
+            $.getJSON('http://api.openweathermap.org/data/2.5/forecast?lat=' + item.lat + '&lon=' + item.long + '&appid=337f84fa35fa79d1a7e6bdfa3a1003ac&units=metric', {}, function (data) {
+                console.log(data);
+                var fivedaydata = [];
+                var comingweek = [];
+                for (i = 4; i < data.cnt; i += 8) {
+                    console.log(data.list[i].main.temp)
+                    fivedaydata.push(data.list[i].main.temp);
+                }
+                chart.data.datasets.push({
+                    label: data.city.name,
+                    data: fivedaydata,
+                    borderColor: linecolors[colorindex],
+                    fill: false
+                });
+                chart.update();
+                colorindex++;
+            });
+        });
+
+        loadCompareData(data_ar);
+    }
+
+    function loadCompareData(cdata){
+        var divlocs = [16, 120,120];
+        var index = 0;
+        cdata.forEach((item)=>{
+            $('#multipleresults').text('');
+            $.getJSON('http://api.openweathermap.org/data/2.5/weather?lat=' + item.lat + '&lon=' + item.long + '&appid=337f84fa35fa79d1a7e6bdfa3a1003ac&units=metric', {}, function (data) {
+                var description = data['weather'][0]['description'].toString();
+                var iconid = data['weather'][0]['icon'];
+                var iconindex = iconid.substring(0, 2);
+                var icon;
+                if (iconid[iconid.length - 1] == 'd') {
+                    try {
+                        icon = './images/icons/day/' + weatherImagesIcons[iconindex][1];
+                    } catch (e) {
+                        icon='./images/icons/day/clear.png';
+                    }
+                } else {
+                    try {
+                        icon = './images/icons/night/' + weatherImagesIcons[iconindex][1];
+                    } catch (e) {
+                        icon='./images/icons/night/clear.png';
+                    }
+                }
+                var resultdiv = "<div onClick='loadExtraInfo("+JSON.stringify(data)+", "+index+");' style='padding-top: " + divlocs[index]+"px; padding-right: 16px; padding-left: 16px;' id='c"+i+"'>"+
+                "<span style='display: block; font-size: 20px;'>Weather in "+data.name+"</span>"+
+                    "<img id = 'ci1' src= "+icon+" width = '90' height = '90' style = 'float: left; padding-top:10px;' />"+
+                    "<div style='float: right; text-align: right;'>"+
+                    "<span style='display: block; padding-top:10px; font-size: 20px;' id='description'>" + description[0].toUpperCase() + description.slice(1)+"</span>"+
+                        "<span style='font-size: 40px;'>"+
+                    "<span id='temp'>" + data['main']['temp']+"</span>"+
+                            "<sup id='extra' style='font-size: 20px;'>°C</sup>"+
+                        "</span>"+
+                    "</div>"+
+                    "<table style='padding: 10px, 0; background-color: rgba(255, 255, 255, 0.1);' class='extracompareinfo' id='extracompareinfo"+index+"'>" +
+                    "<tr><td>Clouds</td><td>"+data.clouds.all+"%</td></tr>" +
+                    "<tr><td>Humidity</td><td>"+data.main.humidity+"%</td></tr>" +
+                    "<tr><td>Wind</td><td>Speed - "+data.wind.speed+"</td></tr>" +
+                    "<tr><td>Pressure</td><td>"+data.main.temp+"hph</td></tr>" +
+                    "<tr><td>Sunrise</td><td>"+new Date(data.sys.sunrise).toTimeString().slice(0, 5)+"</td>" +
+                    "</tr><tr><td>Sunset</td><td>" + new Date(data.sys.sunset).toTimeString().slice(0,5) +"</td></tr>" +
+                    "</table>" +
+                "</div>";
+                $(resultdiv).appendTo('#multipleresults');
+                $('#extracompareinfo' + index).hide();
+                $('#extracompareinfo' + index).trigger("click");
+                index++;
+            });
+            
+        });
+        
+    }
+
+    loadExtraInfo=function(data, index){
+        $('#extracompareinfo' + index).toggle();
+        console.log('CLICK');
+        $('#extracompareinfo' + index).css('color', window.swatchcolor);
+
+        
+    }
 
 });
