@@ -53,7 +53,7 @@ div[data-role="content"] .holder.display:last-child {
 div[data-role="content"] .display.page[data-state~="animate-left"] {
 
     transform: translate(-100%, 0);
-    transition: 0.35s ease-in-out;
+    transition: 0.25s ease-in-out;
 }
 
 div[data-role="content"] .image {
@@ -136,7 +136,7 @@ div[data-role="content"] > .info.page {
 div[data-role="content"] > .info.page[date-state="animate-right"] {
 
     transform: translate(100%, 0);
-    transition: 0.35s ease-in-out;
+    transition: 0.25s ease-in-out;
 }
 
 @media only screen and (max-width: 600px) {
