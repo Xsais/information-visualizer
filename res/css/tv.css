@@ -9,7 +9,7 @@ div[data-role="header"] {
     align-items: center;
 }
 
-div[data-role="header"][data-state='scrolled'] {
+div[data-role="header"][data-state~='scrolled'] {
 
     background-color: rgba(33, 33, 33, 0.75) !important
 }
@@ -50,11 +50,30 @@ div[data-role="content"] .holder.display:last-child {
     border-bottom: 1px solid #000000;
 }
 
+div[data-role="content"] .display.page[data-state~="animate-left"] {
+
+    transform: translate(-100%, 0);
+    transition: 0.25s ease-in-out;
+}
+
 div[data-role="content"] .image {
 
     position: relative;
     width: 100%;
     background-color: #000000;
+}
+
+div[data-role="content"] .image[data-state~="no-image"]:before {
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    display: block;
+    content: " ";
+    background: url(../icon/image.png) no-repeat #212121 50% 30%;
+    background-size: 4rem;
 }
 
 @media only screen and (max-width: 600px) {
@@ -112,6 +131,12 @@ div[data-role="content"] > .info.page {
     flex-flow: column;
     align-items: center;
     position: relative;
+}
+
+div[data-role="content"] > .info.page[date-state="animate-right"] {
+
+    transform: translate(100%, 0);
+    transition: 0.25s ease-in-out;
 }
 
 @media only screen and (max-width: 600px) {
@@ -174,7 +199,7 @@ div[data-role="content"] > .info.page .data.holder canvas {
 
 div[data-role="content"] > .info.page .holder.show {
 
-    height: fit-content;
+    display: table;
     transform: translate(0);
     cursor: pointer;
     margin-top: -20.5vh;
@@ -183,6 +208,7 @@ div[data-role="content"] > .info.page .holder.show {
 div[data-role="content"] > .info.page .holder.show img {
 
     width: 10rem;
+    max-height: 100%;
 }
 
 div[data-role="content"] > .info.page .holder.general {
@@ -235,15 +261,29 @@ div[data-role="content"] > .info.page > .info.list {
 div[data-role="content"] > .info.page > .info.list .episode {
 
     width: 12rem;
+    height: 18.5rem;
     color: #FFFFFF;
     position: relative;
     margin: 0.25rem;
 }
 
+div[data-role="content"] > .info.page > .info.list .episode > .holder.image[data-state~="no-image"]:before {
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    display: block;
+    content: " ";
+    background: url(../icon/image.png) no-repeat #212121 50% 45%;
+    background-size: 4rem;
+}
+
 div[data-role="content"] > .info.page > .info.list .episode:hover:after
-, div[data-role="content"] > .info.page > .info.list .episode[data-state="selected"]:after
+, div[data-role="content"] > .info.page > .info.list .episode[data-state~="selected"]:after
 , div[data-role="content"] > .info.page .holder.show:hover:after
-, div[data-role="content"] > .info.page .holder.show[data-state="selected"]:after{
+, div[data-role="content"] > .info.page .holder.show[data-state~="selected"]:after{
 
     position: absolute;
     content: "Compare";
@@ -260,17 +300,16 @@ div[data-role="content"] > .info.page > .info.list .episode:hover:after
 }
 
 div[data-role="content"] > .info.page .holder.show:hover:after
-, div[data-role="content"] > .info.page .holder.show[data-state="selected"]:after
-    > div[data-role="content"] > .info.page .holder.show img {
+, div[data-role="content"] > .info.page .holder.show[data-state~="selected"]:after {
 
     content: "Compare All";
     font-size: 1.5rem;
 }
 
 div[data-role="content"] > .info.page > .info.list .episode:hover:before
-, div[data-role="content"] > .info.page > .info.list .episode[data-state="selected"]:before
+, div[data-role="content"] > .info.page > .info.list .episode[data-state~="selected"]:before
 , div[data-role="content"] > .info.page .holder.show:hover:before
-, div[data-role="content"] > .info.page .holder.show[data-state="selected"]:before {
+, div[data-role="content"] > .info.page .holder.show[data-state~="selected"]:before {
 
     position: absolute;
     content: " ";
@@ -285,8 +324,8 @@ div[data-role="content"] > .info.page > .info.list .episode:hover:before
     cursor: pointer;
 }
 
-div[data-role="content"] > .info.page > .info.list .episode[data-state="selected"]:before
-, div[data-role="content"] > .info.page .holder.show[data-state="selected"]:before
+div[data-role="content"] > .info.page > .info.list .episode[data-state~="selected"]:before
+, div[data-role="content"] > .info.page .holder.show[data-state~="selected"]:before
 {
 
     background: url(../icon/check_1.png) no-repeat 95% 92.5%;

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../res/css/lib/jquerym.min.css"/>
+    <script src="../res/js/lib/jquery.min.js"></script>
+    <script src="../res/js/lib/jqery-mobile.min.js"></script>
+    <script src="../res/js/lib/chart.min.js"></script>
+    <script src="../res/js/lib/vibrant.js"></script>
+    <link rel="stylesheet" href="../res/css/tv.css">
+    <script async defer src="../res/js/tv.js"></script>
+    <link rel="preconnect" href="https://api.themoviedb.org/" crossorigin="">
+</head>
+<body>
+<div data-role="header" data-position="fixed">
+    <a data-role="none">Stock</a>
+    <div>
+        <img src="../res/icon/favicon.png"/>
+    </div>
+    <a data-role="none">Weather</a>
+</div>
+<div data-role="content">
+    <div class="info page" style="display: none">
+            <div class="data holder">
+                <canvas class="data show"></canvas>
+            </div>
+        <div class="holder general">
+            <div class="holder show">
+                <img/>
+            </div>
+            <div class="info show">
+                <h2 class="title"></h2>
+                <p class="description"></p>
+            </div>
+        </div>
+        <div class="info list"></div>
+    </div>
+    <div class="display page">
+    </div>
+</div>
+</body>
+</html>
