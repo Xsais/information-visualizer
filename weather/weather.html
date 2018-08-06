@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1" user-scalable='no'>
     <link rel="stylesheet" href="../res/css/lib/jquerym.min.css" />
     <script src="../res/js/lib/jquery.min.js"></script>
     <script src="../res/js/lib/jqery-mobile.min.js"></script>
@@ -13,6 +13,27 @@
         html,
         body {
             height: 100%;
+        }
+        table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        td, th {
+            
+            text-align: left;
+            padding: 8px;
+        }
+
+        tr:nth-child(even) {
+            background-color: aliceblue
+        }
+        #cchart{
+            display: none;
+        }
+        .extracompareinfo{
+            display:hidden;
         }
     </style>
 </head>
@@ -41,8 +62,36 @@
                 </div>
             </div>
 
-            <div id="chart" style="padding-right: 16px; padding-left: 16px; margin-top: 140px; background-color: rgba(255, 255, 255, 0.5);">
+            <div id="chart" style="padding-right: 16px; padding-left: 16px; margin-top: 140px; background-color: rgba(255, 255, 255, 0.7);">
                 <canvas id="weatherchart" width="200" height="140"></canvas>
+            </div>
+            <div style="padding-right: 16px; padding-left: 16px; padding-top: 15px; background-color: rgba(255, 255, 255, 0.7);">
+                <table id="extrainfo">
+                    <tr>
+                        <td>Clouds</td>
+                        <td id='clouds'></td>
+                    </tr>
+                    <tr>
+                        <td>Humidity</td>
+                        <td id='humidity'></td>
+                    </tr>
+                    <tr>
+                        <td>Wind</td>
+                        <td id='wind'></td>
+                    </tr>
+                    <tr>
+                        <td>Pressure</td>
+                        <td id='pressure'></td>
+                    </tr>
+                    <tr>
+                        <td>Sunrise</td>
+                        <td id='sunrise'></td>
+                    </tr>
+                    <tr>
+                        <td>Sunset</td>
+                        <td id='sunset'></td>
+                    </tr>
+                </table>
             </div>
         </div>
     </div>
@@ -55,16 +104,57 @@
             <div class="search" style="padding-right: 16px; padding-left: 16px;">
                 <input type="text" placeholder="Location 1" id="searchbar1" name="search" />
                 <input type="text" placeholder="Location 2" id="searchbar2" name="search" />
-                <input type="text" placeholder="Location 3" id="searchbar2" name="search" />
+                <input type="text" placeholder="Location 3" id="searchbar3" name="search" />
+                <input type="button" id="compareNow" value="Compare" />
             </div>
+            <div id="cchart" style="padding-right: 16px; padding-left: 16px; margin-top: 25px; background-color: rgba(255, 255, 255, 0.5);">
+                <canvas id="comparechart" width="200" height="140"></canvas>
+            </div>
+           
+            <div id="multipleresults">
+            </div> 
+        </div>
 
     </div>
 
     <script src="./weather.js"></script>
-    
+
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBXHwslEixns_oNow3E5BBbnF0l4qjJnqY&libraries=places&callback=initMap"
         async defer></script>
 
 </body>
 
 </html>
+<!-- 
+<div class='cr1' style='padding-top: 16px; padding-right: 16px; padding-left: 16px;'>
+    <img id='ci1' src='./images/icons/day/clear.png' width='110' height='110' style='float: left;' />
+    <div style='float: right; text-align: right;'>
+        <span style='display: block; font-size: 25px;' id='description'>Clear sky</span>
+        <span style='font-size: 60px;'>
+            <span id='temp'></span>
+            <sup id='extra' style='font-size: 20px;'>°C</sup>
+        </span>
+    </div>
+</div>
+<div class='cr2' style="padding-top: 150px; padding-right: 16px; padding-left: 16px;">
+    <img id='ci2' src='./images/icons/day/clear.png' width="110" height="110" style="float: left;" />
+
+    <div style="float: right; text-align: right;">
+        <span style="display: block; font-size: 25px;" id="description">Clear sky</span>
+        <span style="font-size: 60px;">
+            <span id="temp"></span>
+            <sup id="extra" style="font-size: 20px;">°C</sup>
+        </span>
+    </div>
+</div>
+<div class='cr3' style="padding-top: 150px; padding-right: 16px; padding-left: 16px;">
+    <img id='ci3' src='./images/icons/day/clear.png' width="110" height="110" style="float: left;" />
+
+    <div style="float: right; text-align: right;">
+        <span style="display: block; font-size: 25px;" id="description">Clear sky</span>
+        <span style="font-size: 60px;">
+            <span id="temp"></span>
+            <sup id="extra" style="font-size: 20px;">°C</sup>
+        </span>
+    </div>
+</div> -->
