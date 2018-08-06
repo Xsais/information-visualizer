@@ -1,23 +1,22 @@
 /**
- * File: movies.js
+ * File: tv.js
  * Assignment: Final Project
  * Creation date: August 1, 2018
  * Last Modified: August 6, 2018
- * Description: Handles display and graphing of "movie" data
+ * Description: Handles display and graphing of tv data
  *
  * GitHub Link: https://github.com/Xsais/information-visualizer/blob/master/res/js/movies.js
  *
  * Group Members:
  *    - James Grau
  *    - Bhavay Grover
- *    - Nathaniel Primo
+ *    - Nathaniel PrimoS
  */
 
 /**
  * Encapsulates the entire program
  *
  */
-
 !(function () {
 
     // Stores the API key to be used for this section of the site
@@ -30,10 +29,10 @@
     const MAX_PAGES = 100;
 
     // Used as a dictionary for the movie" name to it index within the app
-    let movieNameQuery = {};
+    let tvDictionary = {};
 
     // Stores the data to be used to draw and display the shows
-    let movieData = [];
+    let tvData = [];
 
     // Stores the amount of pages that have successfully been displayed to the user
     let loadedPages = 0;
@@ -48,15 +47,15 @@
     let selectedShow = undefined;
 
     // The container that holds the DOM for the "movies"
-    let movieContainer = undefined;
+    let tvContainer = undefined;
 
-    // The container that holds the DOM for the selected "movie"
-    let pageContainer = undefined;
+    // The container that holds the DOM for the selected tv
+    let infoContainer = undefined;
 
-    // The container that holds the DOM for the selected "movie" seasons
+    // The container that holds the DOM for the selected tv seasons
     let seasonList = undefined;
 
-    // Holds all important elements on the selected "movie" page
+    // Holds all important elements on the selected tv page
     let pageContent = undefined;
 
     // Holds the DOM for the head of the site
@@ -65,12 +64,12 @@
     // Pulls the previously saved show from local storage
     if (Storage && localStorage["movie-data"]) {
 
-        movieData = JSON.parse(localStorage["movie-data"]);
+        tvData = JSON.parse(localStorage["movie-data"]);
 
         // Sets up the dictionary of names to the index within the app
-        for (let movieIndex = 0; movieIndex < movieData[0].length; ++movieIndex) {
+        for (let movieIndex = 0; movieIndex < tvData[0].length; ++movieIndex) {
 
-            movieNameQuery[movieData[0][movieIndex].name.replace(/ |-/g, "").toLowerCase()] = movieIndex;
+            tvDictionary[tvData[0][movieIndex].name.replace(/ |-/g, "").toLowerCase()] = movieIndex;
         }
     }
 
@@ -85,14 +84,14 @@
 
         headDisplay.find("*[data-role='none']").removeAttr("class");
 
-        movieContainer = $("div[data-role='content'] > div.display.page");
+        tvContainer = $("div[data-role='content'] > div.display.page");
 
-        pageContainer = $("div[data-role='content'] > div.info.page");
+        infoContainer = $("div[data-role='content'] > div.info.page");
 
         seasonList = $("div[data-role='content'] > .info.page > .info.list");
 
-        // When a "movie" has been swiped on requesting more information
-        movieContainer.on("transitionend", () => {
+        // When a tv has been swiped on requesting more information
+        tvContainer.on("transitionend", () => {
 
             if (transitionTarget == null) {
 
@@ -100,16 +99,16 @@
             }
 
             // Removes the animation from the container
-            movieContainer.removeAttr("data-state");
+            tvContainer.removeAttr("data-state");
 
-            movieContainer.css("display", "none");
-            pageContainer.css("display", "flex");
+            tvContainer.css("display", "none");
+            infoContainer.css("display", "flex");
 
             transitionTarget = null;
         });
 
-        // When the "movie" page has been swiped on requesting less information
-        pageContainer.on("transitionend", () => {
+        // When the tv page has been swiped on requesting less information
+        infoContainer.on("transitionend", () => {
 
             if (transitionTarget == null) {
 
@@ -117,10 +116,10 @@
             }
 
             // Removes the animation from the container
-            pageContainer.removeAttr("date-state");
+            infoContainer.removeAttr("date-state");
 
-            movieContainer.css("display", "block");
-            pageContainer.css("display", "none");
+            tvContainer.css("display", "block");
+            infoContainer.css("display", "none");
 
             transitionTarget = null;
         });
@@ -200,7 +199,7 @@
             }
 
             // The percentage in which the user has scrolled
-            let currentScroll = $(this).scrollTop() / movieContainer[0].scrollHeight;
+            let currentScroll = $(this).scrollTop() / tvContainer[0].scrollHeight;
 
             // Shows the scrolled header once the user has started scrolling
             if (currentScroll > 0.01) {
@@ -220,7 +219,7 @@
             maxScrolled = currentScroll;
 
             // Prevents multiple page loads
-            if (movieContainer[0].scrollHeight != previousHeight) {
+            if (tvContainer[0].scrollHeight != previousHeight) {
 
                 // Loads a new page to the user once they have scrolled 25% of the page
                 if (maxScrolled >= loadedPages * 0.05) {
@@ -232,7 +231,7 @@
 
                     maxScrolled = 0;
 
-                    previousHeight = movieContainer[0].scrollHeight;
+                    previousHeight = tvContainer[0].scrollHeight;
                 }
             }
         });
@@ -241,7 +240,7 @@
         requestPage();
     });
 
-    pageContainer.on("swiperight", function (args) {
+    infoContainer.on("swiperight", function (args) {
 
         if ($(window).width() > 600) {
 
@@ -252,10 +251,10 @@
 
         window.location.hash = "";
 
-        pageContainer.attr("date-state", "animate-right");
+        infoContainer.attr("date-state", "animate-right");
     });
 
-    movieContainer.on("swipeleft", function (args) {
+    tvContainer.on("swipeleft", function (args) {
 
         if ($(window).width() > 600) {
 
@@ -266,14 +265,14 @@
 
         window.location.hash = `#${transitionTarget.find(".title")[0].innerText.replace(/\([0-9]+\)/, "").trim().replace(/ +/g, "-")}`;
 
-        movieContainer.attr("data-state", "animate-left");
+        tvContainer.attr("data-state", "animate-left");
     });
 
     addEventListener("unload", function () {
 
         if (Storage) {
 
-            localStorage["movie-data"] = JSON.stringify(movieData);
+            localStorage["movie-data"] = JSON.stringify(tvData);
         }
     });
 
@@ -306,7 +305,7 @@
 
             if (data != undefined) {
 
-                movieData[pageIndex] = data.results;
+                tvData[pageIndex] = data.results;
             }
 
             // Writes the given page index to the DOM
@@ -315,9 +314,9 @@
             ++loadedPages;
         };
 
-        if (movieData[pageIndex] != undefined) {
+        if (tvData[pageIndex] != undefined) {
 
-            if (movieContainer.children().children().length <= API_PER_PAGE * page) {
+            if (tvContainer.children().children().length <= API_PER_PAGE * page) {
 
                 // Writes the page to the DOM as long as the page has not been written already
                 writePages(pageIndex);
@@ -354,41 +353,41 @@
         // The offset in in order to reference the movie by index
         const indexOffset = index * API_PER_PAGE;
 
-        for (let movieIndex = 0; movieIndex < movieData[index].length; ++movieIndex) {
+        for (let movieIndex = 0; movieIndex < tvData[index].length; ++movieIndex) {
 
             ++moviesDrawn;
 
             // Stores the the index of the movie name
-            movieNameQuery[`${movieData[index][movieIndex].name.replace(/ |-/g, "").toLowerCase()}`] = indexOffset + movieIndex;
+            tvDictionary[`${tvData[index][movieIndex].name.replace(/ |-/g, "").toLowerCase()}`] = indexOffset + movieIndex;
 
-            // creates the holder of the "movie"
-            let movieBackDrop = $(`<div class='ui-grid-a image' ${movieData[index][movieIndex].backdrop_path == null
+            // creates the holder of the tv
+            let movieBackDrop = $(`<div class='ui-grid-a image' ${tvData[index][movieIndex].backdrop_path == null
                 ? "data-state='no-image'"
                 : ""}></div>`);
 
-            // Allows user to switch pages when the "movie" is clicked
+            // Allows user to switch pages when the tv is clicked
             movieBackDrop.on("click", (args) => {
 
                 window.location.hash = `#${$(args.target.parentElement).find(".title")[0].innerText.replace(/\([0-9]+\)/, "").trim().replace(/ +/g, "-")}`;
             });
 
-            // Appends the need html to display the "movie"
-            movieBackDrop.html(`<img ${movieData[index][movieIndex].backdrop_path == null
+            // Appends the need html to display the tv
+            movieBackDrop.html(`<img ${tvData[index][movieIndex].backdrop_path == null
                 ? ``
-                : `src=\"https://image.tmdb.org/t/p/w500${movieData[index][movieIndex].backdrop_path}\"`}>
+                : `src=\"https://image.tmdb.org/t/p/w500${tvData[index][movieIndex].backdrop_path}\"`}>
                                 <h3 class=\"title\">
-                                    ${movieData[index][movieIndex].name} (${movieData[index][movieIndex]
+                                    ${tvData[index][movieIndex].name} (${tvData[index][movieIndex]
                 .first_air_date.split("-")[0]})
                                 </h3>`);
 
-            // Appends the "movie" to the current row
+            // Appends the tv to the current row
             currentRow.append(movieBackDrop);
 
             // Determines if a new row is to be drawn
             if ((index != 0 || moviesDrawn <= PER_PAGE[0] ? moviesDrawn : moviesDrawn - PER_PAGE[0]) % (index == 0 && moviesDrawn <= PER_PAGE[0] ? PER_PAGE[0] : PER_PAGE[1]) == 0) {
 
                 // Appends current row to the DOM
-                movieContainer.append(currentRow);
+                tvContainer.append(currentRow);
 
                 // Creates a new row to be used
                 currentRow = $("<div class='ui-grid-a holder display'></div>");
@@ -397,7 +396,7 @@
     }
 
     /**
-     * Request that a page for a specific "movie" be loaded from the current hash
+     * Request that a page for a specific tv be loaded from the current hash
      *
      */
 
@@ -408,15 +407,15 @@
             // Preload the page if the transition is still being played
             if (transitionTarget == null || transitionTarget != null && $(window).width() > 600) {
 
-                movieContainer.css("display", "block");
-                pageContainer.css("display", "none");
+                tvContainer.css("display", "block");
+                infoContainer.css("display", "none");
             }
 
             selectedShow = null;
 
             if (loadedPages == 0) {
 
-                // Loads the "movie" selection page asynchronously
+                // Loads the tv selection page asynchronously
                 loadPage(1).finally(() => {
 
                     ready = true;
@@ -426,7 +425,7 @@
         }
 
         // Gets the index of the movie using the dictionary to translate it
-        let movieIndex = movieNameQuery[`${window.location.hash.split("#")[1].replace(/-/g, "").toLowerCase()}`];
+        let movieIndex = tvDictionary[`${window.location.hash.split("#")[1].replace(/-/g, "").toLowerCase()}`];
 
         // Go to home page if movie was invalid
         if (movieIndex == undefined) {
@@ -439,13 +438,13 @@
         let pageIndex = Math.floor(movieIndex / API_PER_PAGE);
 
         // Gets the show that the user requested
-        let tmpShowCompare = movieData[pageIndex][movieIndex - (pageIndex * API_PER_PAGE)];
+        let tmpShowCompare = tvData[pageIndex][movieIndex - (pageIndex * API_PER_PAGE)];
 
         // Preload the page if the transition is still being played
         if (transitionTarget == null || transitionTarget != null && $(window).width() > 600) {
 
-            movieContainer.css("display", "none");
-            pageContainer.css("display", "flex");
+            tvContainer.css("display", "none");
+            infoContainer.css("display", "flex");
         }
 
         // Prevents page "reload" if already on the page
@@ -456,7 +455,7 @@
 
         selectedShow = tmpShowCompare;
 
-        // Cleans the previous "movie" page
+        // Cleans the previous tv page
         seasonList.html("");
 
         // Resets the graph
