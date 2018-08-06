@@ -218,7 +218,7 @@ $(function () {
             // Loads a new page to the user once they have scrolled 25% of the page
             if (maxScrolled >= loadedPages * 0.05) {
 
-                if (/* TODO: For debugging purposes only */ loadedPages != 3 && loadedPages <= MAX_PAGES) {
+                if (loadedPages <= MAX_PAGES) {
 
                     loadPage(loadedPages + 1);
                 }
