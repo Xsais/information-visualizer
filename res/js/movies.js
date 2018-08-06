@@ -13,627 +13,636 @@
  *    - Nathaniel Primo
  */
 
-// Stores the API key to be used for this section of the site
-const API_KEY = "48180ed3f84ed2dc1ab61d9ab903405a";
+/**
+ * Encapsulates the entire program
+ *
+ */
+!(function () {
 
-// Stores the static value of amount of the show returned for each request to the API
-const API_PER_PAGE = 20;
+    // Stores the API key to be used for this section of the site
+    const API_KEY = "48180ed3f84ed2dc1ab61d9ab903405a";
 
-// Stores the maximum number of pages to load
-const MAX_PAGES = 100;
+    // Stores the static value of amount of the show returned for each request to the API
+    const API_PER_PAGE = 20;
 
-// Used as a dictionary for the movie" name to it index within the app
-let movieNameQuery = {};
+    // Stores the maximum number of pages to load
+    const MAX_PAGES = 100;
 
-// Stores the data to be used to draw and display the shows
-let movieData = [];
+    // Used as a dictionary for the movie" name to it index within the app
+    let movieNameQuery = {};
 
-// Stores the amount of pages that have successfully been displayed to the user
-let loadedPages = 0;
+    // Stores the data to be used to draw and display the shows
+    let movieData = [];
 
-// Determines weather the app is ready to be used
-let ready = false;
+    // Stores the amount of pages that have successfully been displayed to the user
+    let loadedPages = 0;
 
-// The target of the currently played transition
-let transitionTarget = null;
+    // Determines weather the app is ready to be used
+    let ready = false;
 
-// Stores the show the user as selected
-let selectedShow = undefined;
+    // The target of the currently played transition
+    let transitionTarget = null;
 
-// The container that holds the DOM for the "movies"
-let movieContainer = undefined;
+    // Stores the show the user as selected
+    let selectedShow = undefined;
 
-// The container that holds the DOM for the selected "movie"
-let pageContainer = undefined;
+    // The container that holds the DOM for the "movies"
+    let movieContainer = undefined;
 
-// The container that holds the DOM for the selected "movie" seasons
-let seasonList = undefined;
+    // The container that holds the DOM for the selected "movie"
+    let pageContainer = undefined;
 
-// Holds all important elements on the selected "movie" page
-let pageContent = undefined;
+    // The container that holds the DOM for the selected "movie" seasons
+    let seasonList = undefined;
 
-// Holds the DOM for the head of the site
-let headDisplay = undefined;
+    // Holds all important elements on the selected "movie" page
+    let pageContent = undefined;
 
-// Pulls the previously saved show from local storage
-if (Storage && localStorage["movie-data"]) {
+    // Holds the DOM for the head of the site
+    let headDisplay = undefined;
 
-    movieData = JSON.parse(localStorage["movie-data"]);
+    // Pulls the previously saved show from local storage
+    if (Storage && localStorage["movie-data"]) {
 
-    // Sets up the dictionary of names to the index within the app
-    for (let movieIndex = 0; movieIndex < movieData[0].length; ++movieIndex) {
+        movieData = JSON.parse(localStorage["movie-data"]);
 
-        movieNameQuery[movieData[0][movieIndex].name.replace(/ |-/g, "").toLowerCase()] = movieIndex;
+        // Sets up the dictionary of names to the index within the app
+        for (let movieIndex = 0; movieIndex < movieData[0].length; ++movieIndex) {
+
+            movieNameQuery[movieData[0][movieIndex].name.replace(/ |-/g, "").toLowerCase()] = movieIndex;
+        }
     }
-}
 
-$(function () {
+    $(function () {
 
-    // Stores the lowest the user has scrolled
-    let maxScrolled = 0;
+        // Stores the lowest the user has scrolled
+        let maxScrolled = 0;
 
-    let previousHeight = 0;
+        let previousHeight = 0;
 
-    headDisplay = $("div[data-role='header']");
+        headDisplay = $("div[data-role='header']");
 
-    headDisplay.find("*[data-role='none']").removeAttr("class");
+        headDisplay.find("*[data-role='none']").removeAttr("class");
 
-    movieContainer = $("div[data-role='content'] > div.display.page");
+        movieContainer = $("div[data-role='content'] > div.display.page");
 
-    pageContainer = $("div[data-role='content'] > div.info.page");
+        pageContainer = $("div[data-role='content'] > div.info.page");
 
-    seasonList = $("div[data-role='content'] > .info.page > .info.list");
+        seasonList = $("div[data-role='content'] > .info.page > .info.list");
 
-    // When a "movie" has been swiped on requesting more information
-    movieContainer.on("transitionend", () => {
+        // When a "movie" has been swiped on requesting more information
+        movieContainer.on("transitionend", () => {
 
-        if (transitionTarget == null) {
+            if (transitionTarget == null) {
 
-            return;
-        }
+                return;
+            }
 
-        // Removes the animation from the container
-        movieContainer.removeAttr("data-state");
+            // Removes the animation from the container
+            movieContainer.removeAttr("data-state");
 
-        movieContainer.css("display", "none");
-        pageContainer.css("display", "flex");
+            movieContainer.css("display", "none");
+            pageContainer.css("display", "flex");
 
-        transitionTarget = null;
-    });
+            transitionTarget = null;
+        });
 
-    // When the "movie" page has been swiped on requesting less information
-    pageContainer.on("transitionend", () => {
+        // When the "movie" page has been swiped on requesting less information
+        pageContainer.on("transitionend", () => {
 
-        if (transitionTarget == null) {
+            if (transitionTarget == null) {
 
-            return;
-        }
+                return;
+            }
 
-        // Removes the animation from the container
-        pageContainer.removeAttr("date-state");
+            // Removes the animation from the container
+            pageContainer.removeAttr("date-state");
 
-        movieContainer.css("display", "block");
-        pageContainer.css("display", "none");
+            movieContainer.css("display", "block");
+            pageContainer.css("display", "none");
 
-        transitionTarget = null;
-    });
+            transitionTarget = null;
+        });
 
-    // Sets up the chart that will be used to display the movie info
-    pageContent = {
+        // Sets up the chart that will be used to display the movie info
+        pageContent = {
 
-        canvas: new Chart($("div[data-role='content'] > .info.page .data.show")[0].getContext("2d"), {
+            canvas: new Chart($("div[data-role='content'] > .info.page .data.show")[0].getContext("2d"), {
 
-            type: 'line',
-            data: {
-                labels: [],
-                datasets: [
-                    {
-                        label: "Ranting",
-                        fill: false,
-                        data: []
-                    }
-                ]
-            },
-            options: {
-                scales: {
-                    xAxes: [
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [
                         {
-                            scaleLabel: {
-                                display: true,
-                                labelString: 'Seasons'
-                            }
+                            label: "Ranting",
+                            fill: false,
+                            data: []
                         }
                     ]
+                },
+                options: {
+                    scales: {
+                        xAxes: [
+                            {
+                                scaleLabel: {
+                                    display: true,
+                                    labelString: 'Seasons'
+                                }
+                            }
+                        ]
+                    }
                 }
+            }),
+            posterContainer: $("div[data-role='content'] > .info.page .holder.show"),
+            poster: $("div[data-role='content'] > .info.page .holder.show img"),
+            title: $("div[data-role='content'] .holder.general h2.title"),
+            description: $("div[data-role='content'] .holder.general p.description")
+        };
+
+        // Allows modification of image data after it has been loaded from cross-origin
+        pageContent.poster[0].crossOrigin = "Anonymous";
+
+        // Assigns the color to be used for the line graph
+        pageContent.poster.on("load", function () {
+
+            let swatches = new Vibrant(pageContent.poster[0]).swatches();
+
+            pageContent.canvas.data.datasets[0].backgroundColor = swatches.Vibrant.getHex();
+            pageContent.canvas.data.datasets[0].borderColor = swatches.LightVibrant.getHex();
+
+            pageContent.canvas.update();
+        });
+
+        // Toggles the display of the selected season data on the graph
+        pageContent.posterContainer.on("click", function () {
+
+            if (selectedShow.campared) {
+
+                for (let seasonIndex = 0; seasonIndex < selectedShow.seasons.length; ++seasonIndex) {
+
+                    toggleSeasonGraph(seasonIndex, undefined, "");
+                }
+                return;
             }
-        }),
-        posterContainer: $("div[data-role='content'] > .info.page .holder.show"),
-        poster: $("div[data-role='content'] > .info.page .holder.show img"),
-        title: $("div[data-role='content'] .holder.general h2.title"),
-        description: $("div[data-role='content'] .holder.general p.description")
-    };
-
-    // Allows modification of image data after it has been loaded from cross-origin
-    pageContent.poster[0].crossOrigin = "Anonymous";
-
-    // Assigns the color to be used for the line graph
-    pageContent.poster.on("load", function () {
-
-        let swatches = new Vibrant(pageContent.poster[0]).swatches();
-
-        pageContent.canvas.data.datasets[0].backgroundColor = swatches.Vibrant.getHex();
-        pageContent.canvas.data.datasets[0].borderColor = swatches.LightVibrant.getHex();
-
-        pageContent.canvas.update();
-    });
-
-    // Toggles the display of the selected season data on the graph
-    pageContent.posterContainer.on("click", function () {
-
-        if (selectedShow.campared) {
 
             for (let seasonIndex = 0; seasonIndex < selectedShow.seasons.length; ++seasonIndex) {
 
-                toggleSeasonGraph(seasonIndex, undefined, "");
+                toggleSeasonGraph(seasonIndex, undefined, "selected");
             }
-            return;
-        }
-
-        for (let seasonIndex = 0; seasonIndex < selectedShow.seasons.length; ++seasonIndex) {
-
-            toggleSeasonGraph(seasonIndex, undefined, "selected");
-        }
-    });
-
-    window.addEventListener("scroll", function () {
-
-        if (!ready) {
-
-            return;
-        }
-
-        // The percentage in which the user has scrolled
-        let currentScroll = $(this).scrollTop() / movieContainer[0].scrollHeight;
-
-        // Shows the scrolled header once the user has started scrolling
-        if (currentScroll > 0.01) {
-
-            headDisplay.attr("data-state", "scrolled");
-        } else {
-
-            headDisplay.removeAttr("data-state");
-        }
-
-        // Prevent data from being changed when the user scrolls up
-        if (currentScroll <= maxScrolled && maxScrolled - currentScroll > 0) {
-
-            return;
-        }
-
-        maxScrolled = currentScroll;
-
-        // Prevents multiple page loads
-        if (movieContainer[0].scrollHeight != previousHeight) {
-
-            // Loads a new page to the user once they have scrolled 25% of the page
-            if (maxScrolled >= loadedPages * 0.05) {
-
-                if (loadedPages <= MAX_PAGES) {
-
-                    loadPage(loadedPages + 1);
-                }
-
-                maxScrolled = 0;
-
-                previousHeight = movieContainer[0].scrollHeight;
-            }
-        }
-    });
-
-    // Checks if the user has requested a specific movie
-    requestPage();
-});
-
-$(window).on("swiperight", function (args) {
-
-    if (selectedShow == null) {
-
-        return;
-    }
-
-    transitionTarget = $(args.target).parent();
-
-    window.location.hash = "";
-
-    pageContainer.attr("date-state", "animate-right");
-});
-
-$(window).on("swipeleft", function (args) {
-
-    if (selectedShow != null || $(window).width() > 600) {
-
-        return;
-    }
-
-    transitionTarget = $(args.target).parent();
-
-    window.location.hash = `#${transitionTarget.find(".title")[0].innerText.replace(/\([0-9]+\)/, "").trim().replace(/ +/g, "-")}`;
-
-    movieContainer.attr("data-state", "animate-left");
-});
-
-addEventListener("unload", function () {
-
-    if (Storage) {
-
-        localStorage["movie-data"] = JSON.stringify(movieData);
-    }
-});
-
-// Changes the page depending on the movie that was requested
-window.addEventListener("hashchange", requestPage);
-
-/**
- * Load a desired page asynchronously and writes the results to DOM
- *
- * @param page The desired page number to be loaded
- * @returns {Promise<void>} The object in which completes the request
- */
-async function loadPage(page) {
-
-    // Determines if the page has already been a loaded
-    if (page <= loadedPages) {
-
-        return;
-    }
-
-    let pageIndex = page - 1;
-
-    /**
-     * Writes entries for a desired page to the DOM
-     *
-     * @param pageIndex The desired index of the page in which would be loaded
-     * @param data The data in which to be assigned at that index
-     */
-    const writePages = function (pageIndex, data) {
-
-        if (data != undefined) {
-
-            movieData[pageIndex] = data.results;
-        }
-
-        // Writes the given page index to the DOM
-        writeHome(pageIndex);
-
-        ++loadedPages;
-    };
-
-    if (movieData[pageIndex] != undefined) {
-
-        if (movieContainer.children().children().length <= API_PER_PAGE * page) {
-
-            // Writes the page to the DOM as long as the page has not been written already
-            writePages(pageIndex);
-        }
-        return;
-    }
-
-    // Loads the data for the requested page
-    $.ajax({
-
-        url: `https://api.themoviedb.org/3/discover/tv?api_key=${API_KEY}&language=en-US&sort_by=popularity.desc&page=${page}&timezone=America%2FNew_York&include_null_first_air_dates=false`,
-        dataType: "JSON",
-        success: data => writePages(pageIndex, data)
-    });
-
-}
-
-/**
- * Writes the content of a desired page to the DOM
- *
- * @param index The index of the page that is to be loaded
- */
-function writeHome(index) {
-
-    // Determines the amount of "movies" to draw per row
-    const PER_PAGE = [2, 3];
-
-    // The total amount of "movies" written to the DOM
-    let moviesDrawn = 0;
-
-    // Loads the container for a row of "movies"
-    let currentRow = $("<div class='ui-grid-a holder display'></div>");
-
-    // The offset in in order to reference the movie by index
-    const indexOffset = index * API_PER_PAGE;
-
-    for (let movieIndex = 0; movieIndex < movieData[index].length; ++movieIndex) {
-
-        ++moviesDrawn;
-
-        // Stores the the index of the movie name
-        movieNameQuery[`${movieData[index][movieIndex].name.replace(/ |-/g, "").toLowerCase()}`] = indexOffset + movieIndex;
-
-        // creates the holder of the "movie"
-        let movieBackDrop = $(`<div class='ui-grid-a image' ${movieData[index][movieIndex].backdrop_path == null
-            ? "data-state='no-image'"
-            : ""}></div>`);
-
-        // Allows user to switch pages when the "movie" is clicked
-        movieBackDrop.on("click", (args) => {
-
-            window.location.hash = `#${$(args.target.parentElement).find(".title")[0].innerText.replace(/\([0-9]+\)/, "").trim().replace(/ +/g, "-")}`;
         });
 
-        // Appends the need html to display the "movie"
-        movieBackDrop.html(`<img ${movieData[index][movieIndex].backdrop_path == null
-            ? ``
-            : `src=\"https://image.tmdb.org/t/p/w500${movieData[index][movieIndex].backdrop_path}\"`}>
+        window.addEventListener("scroll", function () {
+
+            if (!ready) {
+
+                return;
+            }
+
+            // The percentage in which the user has scrolled
+            let currentScroll = $(this).scrollTop() / movieContainer[0].scrollHeight;
+
+            // Shows the scrolled header once the user has started scrolling
+            if (currentScroll > 0.01) {
+
+                headDisplay.attr("data-state", "scrolled");
+            } else {
+
+                headDisplay.removeAttr("data-state");
+            }
+
+            // Prevent data from being changed when the user scrolls up
+            if (currentScroll <= maxScrolled && maxScrolled - currentScroll > 0) {
+
+                return;
+            }
+
+            maxScrolled = currentScroll;
+
+            // Prevents multiple page loads
+            if (movieContainer[0].scrollHeight != previousHeight) {
+
+                // Loads a new page to the user once they have scrolled 25% of the page
+                if (maxScrolled >= loadedPages * 0.05) {
+
+                    if (loadedPages <= MAX_PAGES) {
+
+                        loadPage(loadedPages + 1);
+                    }
+
+                    maxScrolled = 0;
+
+                    previousHeight = movieContainer[0].scrollHeight;
+                }
+            }
+        });
+
+        // Checks if the user has requested a specific movie
+        requestPage();
+    });
+
+    $(window).on("swiperight", function (args) {
+
+        if (selectedShow == null) {
+
+            return;
+        }
+
+        transitionTarget = $(args.target).parent();
+
+        window.location.hash = "";
+
+        pageContainer.attr("date-state", "animate-right");
+    });
+
+    $(window).on("swipeleft", function (args) {
+
+        if (selectedShow != null || $(window).width() > 600) {
+
+            return;
+        }
+
+        transitionTarget = $(args.target).parent();
+
+        window.location.hash = `#${transitionTarget.find(".title")[0].innerText.replace(/\([0-9]+\)/, "").trim().replace(/ +/g, "-")}`;
+
+        movieContainer.attr("data-state", "animate-left");
+    });
+
+    addEventListener("unload", function () {
+
+        if (Storage) {
+
+            localStorage["movie-data"] = JSON.stringify(movieData);
+        }
+    });
+
+// Changes the page depending on the movie that was requested
+    window.addEventListener("hashchange", requestPage);
+
+    /**
+     * Load a desired page asynchronously and writes the results to DOM
+     *
+     * @param page The desired page number to be loaded
+     * @returns {Promise<void>} The object in which completes the request
+     */
+    async function loadPage(page) {
+
+        // Determines if the page has already been a loaded
+        if (page <= loadedPages) {
+
+            return;
+        }
+
+        let pageIndex = page - 1;
+
+        /**
+         * Writes entries for a desired page to the DOM
+         *
+         * @param pageIndex The desired index of the page in which would be loaded
+         * @param data The data in which to be assigned at that index
+         */
+        const writePages = function (pageIndex, data) {
+
+            if (data != undefined) {
+
+                movieData[pageIndex] = data.results;
+            }
+
+            // Writes the given page index to the DOM
+            writeHome(pageIndex);
+
+            ++loadedPages;
+        };
+
+        if (movieData[pageIndex] != undefined) {
+
+            if (movieContainer.children().children().length <= API_PER_PAGE * page) {
+
+                // Writes the page to the DOM as long as the page has not been written already
+                writePages(pageIndex);
+            }
+            return;
+        }
+
+        // Loads the data for the requested page
+        $.ajax({
+
+            url: `https://api.themoviedb.org/3/discover/tv?api_key=${API_KEY}&language=en-US&sort_by=popularity.desc&page=${page}&timezone=America%2FNew_York&include_null_first_air_dates=false`,
+            dataType: "JSON",
+            success: data => writePages(pageIndex, data)
+        });
+
+    }
+
+    /**
+     * Writes the content of a desired page to the DOM
+     *
+     * @param index The index of the page that is to be loaded
+     */
+    function writeHome(index) {
+
+        // Determines the amount of "movies" to draw per row
+        const PER_PAGE = [2, 3];
+
+        // The total amount of "movies" written to the DOM
+        let moviesDrawn = 0;
+
+        // Loads the container for a row of "movies"
+        let currentRow = $("<div class='ui-grid-a holder display'></div>");
+
+        // The offset in in order to reference the movie by index
+        const indexOffset = index * API_PER_PAGE;
+
+        for (let movieIndex = 0; movieIndex < movieData[index].length; ++movieIndex) {
+
+            ++moviesDrawn;
+
+            // Stores the the index of the movie name
+            movieNameQuery[`${movieData[index][movieIndex].name.replace(/ |-/g, "").toLowerCase()}`] = indexOffset + movieIndex;
+
+            // creates the holder of the "movie"
+            let movieBackDrop = $(`<div class='ui-grid-a image' ${movieData[index][movieIndex].backdrop_path == null
+                ? "data-state='no-image'"
+                : ""}></div>`);
+
+            // Allows user to switch pages when the "movie" is clicked
+            movieBackDrop.on("click", (args) => {
+
+                window.location.hash = `#${$(args.target.parentElement).find(".title")[0].innerText.replace(/\([0-9]+\)/, "").trim().replace(/ +/g, "-")}`;
+            });
+
+            // Appends the need html to display the "movie"
+            movieBackDrop.html(`<img ${movieData[index][movieIndex].backdrop_path == null
+                ? ``
+                : `src=\"https://image.tmdb.org/t/p/w500${movieData[index][movieIndex].backdrop_path}\"`}>
                                 <h3 class=\"title\">
                                     ${movieData[index][movieIndex].name} (${movieData[index][movieIndex]
-            .first_air_date.split("-")[0]})
+                .first_air_date.split("-")[0]})
                                 </h3>`);
 
-        // Appends the "movie" to the current row
-        currentRow.append(movieBackDrop);
+            // Appends the "movie" to the current row
+            currentRow.append(movieBackDrop);
 
-        // Determines if a new row is to be drawn
-        if ((index != 0 || moviesDrawn <= PER_PAGE[0] ? moviesDrawn : moviesDrawn - PER_PAGE[0]) % (index == 0 && moviesDrawn <= PER_PAGE[0] ? PER_PAGE[0] : PER_PAGE[1]) == 0) {
+            // Determines if a new row is to be drawn
+            if ((index != 0 || moviesDrawn <= PER_PAGE[0] ? moviesDrawn : moviesDrawn - PER_PAGE[0]) % (index == 0 && moviesDrawn <= PER_PAGE[0] ? PER_PAGE[0] : PER_PAGE[1]) == 0) {
 
-            // Appends current row to the DOM
-            movieContainer.append(currentRow);
+                // Appends current row to the DOM
+                movieContainer.append(currentRow);
 
-            // Creates a new row to be used
-            currentRow = $("<div class='ui-grid-a holder display'></div>");
+                // Creates a new row to be used
+                currentRow = $("<div class='ui-grid-a holder display'></div>");
+            }
         }
     }
-}
 
-/**
- * Request that a page for a specific "movie" be loaded from the current hash
- */
+    /**
+     * Request that a page for a specific "movie" be loaded from the current hash
+     *
+     */
 
-function requestPage() {
+    function requestPage() {
 
-    if (window.location.hash == "") {
+        if (window.location.hash == "") {
+
+            // Preload the page if the transition is still being played
+            if (transitionTarget == null || transitionTarget != null && $(window).width() > 600) {
+
+                movieContainer.css("display", "block");
+                pageContainer.css("display", "none");
+            }
+
+            selectedShow = null;
+
+            if (loadedPages == 0) {
+
+                // Loads the "movie" selection page asynchronously
+                loadPage(1).finally(() => {
+
+                    ready = true;
+                });
+            }
+            return;
+        }
+
+        // Gets the index of the movie using the dictionary to translate it
+        let movieIndex = movieNameQuery[`${window.location.hash.split("#")[1].replace(/-/g, "").toLowerCase()}`];
+
+        // Go to home page if movie was invalid
+        if (movieIndex == undefined) {
+
+            window.location.hash = "";
+            return;
+        }
+
+        // Gets the index of where the data for the page lives
+        let pageIndex = Math.floor(movieIndex / API_PER_PAGE);
+
+        // Gets the show that the user requested
+        let tmpShowCompare = movieData[pageIndex][movieIndex - (pageIndex * API_PER_PAGE)];
 
         // Preload the page if the transition is still being played
         if (transitionTarget == null || transitionTarget != null && $(window).width() > 600) {
 
-            movieContainer.css("display", "block");
-            pageContainer.css("display", "none");
+            movieContainer.css("display", "none");
+            pageContainer.css("display", "flex");
         }
 
-        selectedShow = null;
+        // Prevents page "reload" if already on the page
+        if (tmpShowCompare == selectedShow) {
 
-        if (loadedPages == 0) {
-
-            // Loads the "movie" selection page asynchronously
-            loadPage(1).finally(() => {
-
-                ready = true;
-            });
+            return;
         }
-        return;
-    }
 
-    // Gets the index of the movie using the dictionary to translate it
-    let movieIndex = movieNameQuery[`${window.location.hash.split("#")[1].replace(/-/g, "").toLowerCase()}`];
+        selectedShow = tmpShowCompare;
 
-    // Go to home page if movie was invalid
-    if (movieIndex == undefined) {
+        // Cleans the previous "movie" page
+        seasonList.html("");
 
-        window.location.hash = "";
-        return;
-    }
+        // Resets the graph
+        pageContent.canvas.data.labels = [];
+        pageContent.canvas.data.datasets[0].data = [];
 
-    // Gets the index of where the data for the page lives
-    let pageIndex = Math.floor(movieIndex / API_PER_PAGE);
+        pageContent.posterContainer.removeAttr("data-state");
 
-    // Gets the show that the user requested
-    let tmpShowCompare = movieData[pageIndex][movieIndex - (pageIndex * API_PER_PAGE)];
+        selectedShow.compareCount = 0;
 
-    // Preload the page if the transition is still being played
-    if (transitionTarget == null || transitionTarget != null && $(window).width() > 600) {
+        /**
+         * Writes the specified season to the DOM
+         *
+         * @param seasonIndex The desired season to be written
+         * @returns {Promise<void>} The object in which fulfills the request
+         */
+        async function loadSubPage(seasonIndex) {
 
-        movieContainer.css("display", "none");
-        pageContainer.css("display", "flex");
-    }
-
-    // Prevents page "reload" if already on the page
-    if (tmpShowCompare == selectedShow) {
-
-        return;
-    }
-
-    selectedShow = tmpShowCompare;
-
-    // Cleans the previous "movie" page
-    seasonList.html("");
-
-    // Resets the graph
-    pageContent.canvas.data.labels = [];
-    pageContent.canvas.data.datasets[0].data = [];
-
-    pageContent.posterContainer.removeAttr("data-state");
-
-    selectedShow.compareCount = 0;
-
-    /**
-     * Writes the specified season to the DOM
-     *
-     * @param seasonIndex The desired season to be written
-     * @returns {Promise<void>} The object in which fulfills the request
-     */
-    async function loadSubPage(seasonIndex) {
-
-        let display = $(`<div class='episode'>
+            let display = $(`<div class='episode'>
                                 <div class='holder image'${selectedShow.seasons[seasonIndex].poster_path == null
-            ? "data-state=\"no-image\""
-            : ""}>
+                ? "data-state=\"no-image\""
+                : ""}>
                                     <img ${selectedShow.seasons[seasonIndex].poster_path == null
-            ? ``
-            : `src=\"https://image.tmdb.org/t/p/w500${selectedShow.seasons[seasonIndex].poster_path}\"`}>
+                ? ``
+                : `src=\"https://image.tmdb.org/t/p/w500${selectedShow.seasons[seasonIndex].poster_path}\"`}>
                                 </div>
                                 <div class='info title'>${selectedShow.seasons[seasonIndex].name}<span class='air date'>${selectedShow.seasons[seasonIndex].air_date}</span></div>
                             </div>`);
 
-        // Allows the user to determine if the current season will appear on the graph
-        display.on("click", async function () {
+            // Allows the user to determine if the current season will appear on the graph
+            display.on("click", async function () {
 
-            let qDisplay = $(this);
+                let qDisplay = $(this);
 
-            toggleSeasonGraph(qDisplay.find(".info.title").text().replace(/[0-9]{4}(-[0-9]{2}){2}/g, "").match(/[0-9]+/g)[0] - 1, qDisplay);
-        });
-
-        // Graph all previous selections
-        toggleSeasonGraph(seasonIndex, display, selectedShow.campared || selectedShow.seasons[seasonIndex].active ? "selected" : "");
-
-        seasonList.append(display);
-
-        pageContent.poster.attr("src", `https://image.tmdb.org/t/p/w500${selectedShow.poster_path}`);
-        pageContent.title.text(selectedShow.name);
-        pageContent.description.text(selectedShow.overview);
-    }
-
-    // Determines if season has to be loaded from the api
-    if (selectedShow.seasons != undefined) {
-
-        // Writes each season to the DOM
-        for (let seasonIndex = 0; seasonIndex < selectedShow.seasons.length; ++seasonIndex) {
-
-            loadSubPage(seasonIndex);
-
-            console.log("Loaded page from cache");
-        }
-    } else {
-
-        /**
-         * Recursively loads season until given an error
-         */
-        function loadSeason(id, season) {
-
-            $.ajax({
-
-                url: `https://api.themoviedb.org/3/tv/${id}/season/${season}?api_key=${API_KEY}&language=en-US`,
-                dataType: "JSON",
-                success: (data) => {
-
-                    selectedShow.seasons.push(data);
-
-                    // Loads the next season
-                    loadSeason(id, season + 1);
-
-                    // Draw the season to the DOM
-                    loadSubPage(season - 1);
-                }
+                toggleSeasonGraph(qDisplay.find(".info.title").text().replace(/[0-9]{4}(-[0-9]{2}){2}/g, "").match(/[0-9]+/g)[0] - 1, qDisplay);
             });
-        };
 
-        selectedShow.seasons = [];
+            // Graph all previous selections
+            toggleSeasonGraph(seasonIndex, display, selectedShow.campared || selectedShow.seasons[seasonIndex].active ? "selected" : "");
 
-        // Start Recursively loading seasons
-        loadSeason(selectedShow.id, 1);
-    }
-}
+            seasonList.append(display);
 
-/**
- * Toggles the visibility of season data on the graph
- *
- * @param seasonIndex The desired season
- * @param [qDisplay] The container of the season, if not present it is pulled from the DOM
- * @param [state] The state in which to force the element
- */
-function toggleSeasonGraph(seasonIndex, qDisplay, state) {
-
-    // Pulls the container for the season if not given
-    qDisplay = qDisplay == undefined ? $(seasonList.find(".episode")[seasonIndex]) : qDisplay;
-
-    // Displays the season on the graph
-    if (state == "selected" || (state == undefined && !selectedShow.seasons[seasonIndex].active)) {
-
-        if (state == undefined && selectedShow.seasons[seasonIndex].active) {
-
-            return;
+            pageContent.poster.attr("src", `https://image.tmdb.org/t/p/w500${selectedShow.poster_path}`);
+            pageContent.title.text(selectedShow.name);
+            pageContent.description.text(selectedShow.overview);
         }
 
-        qDisplay.attr("data-state", "selected");
+        // Determines if season has to be loaded from the api
+        if (selectedShow.seasons != undefined) {
 
-        selectedShow.seasons[seasonIndex].active = true;
+            // Writes each season to the DOM
+            for (let seasonIndex = 0; seasonIndex < selectedShow.seasons.length; ++seasonIndex) {
 
-        // Caculat vot average for the season if not already calculated
-        if (selectedShow.seasons[seasonIndex].vote_average == undefined) {
+                loadSubPage(seasonIndex);
 
-            selectedShow.seasons[seasonIndex].vote_average = 0;
-
-            for (let episodeIndex = 0; episodeIndex < selectedShow.seasons[seasonIndex].episodes.length; ++episodeIndex) {
-
-                selectedShow.seasons[seasonIndex].vote_average += selectedShow.seasons[seasonIndex].episodes[episodeIndex].vote_average;
+                console.log("Loaded page from cache");
             }
-        }
+        } else {
 
-        let insertIndex = 0;
+            /**
+             * Recursively loads season until given an error
+             *
+             */
+            function loadSeason(id, season) {
 
-        // find the position in which to insert the graph data
-        for (let labelIndex = 0; labelIndex < pageContent.canvas.data.labels.length; ++labelIndex) {
+                $.ajax({
 
-            if (seasonIndex > pageContent.canvas.data.labels[labelIndex] - 1) {
+                    url: `https://api.themoviedb.org/3/tv/${id}/season/${season}?api_key=${API_KEY}&language=en-US`,
+                    dataType: "JSON",
+                    success: (data) => {
 
-                insertIndex = labelIndex + 1;
-            }
-        }
+                        selectedShow.seasons.push(data);
 
-        // Check if graph data is already present
-        if (seasonIndex + 1 != pageContent.canvas.data.labels[insertIndex]) {
+                        // Loads the next season
+                        loadSeason(id, season + 1);
 
-            pageContent.canvas.data.labels.splice(insertIndex, 0, seasonIndex + 1);
-            pageContent.canvas.data.datasets[0].data.splice(insertIndex, 0, selectedShow.seasons[seasonIndex].vote_average);
-            ++selectedShow.compareCount;
-        }
+                        // Draw the season to the DOM
+                        loadSubPage(season - 1);
+                    }
+                });
+            };
 
-        // Selects "compare all" if all seasons are selected
-        if (selectedShow.compareCount >= selectedShow.seasons.length) {
+            selectedShow.seasons = [];
 
-            pageContent.posterContainer.attr("data-state", "selected");
-            selectedShow.campared = true;
-        }
-    } else {
-
-        if (state == undefined && !selectedShow.seasons[seasonIndex].active) {
-
-            return;
-        }
-
-        qDisplay.removeAttr("data-state");
-
-        selectedShow.seasons[seasonIndex].active = false;
-
-        if (pageContent.canvas.data.labels == undefined) {
-
-            return;
-        }
-
-        // Find the position in which to delete the graph data
-        for (let labelIndex = 0; labelIndex < pageContent.canvas.data.labels.length; ++labelIndex) {
-
-            if (pageContent.canvas.data.labels[labelIndex] == seasonIndex + 1) {
-
-                pageContent.canvas.data.labels.splice(labelIndex, 1);
-                pageContent.canvas.data.datasets[0].data.splice(labelIndex, 1);
-                --selectedShow.compareCount;
-
-                break;
-            }
-        }
-
-        // Deselects "compare all" if not all seasons are selected
-        if (selectedShow.compareCount == selectedShow.seasons.length - 1) {
-
-            pageContent.posterContainer.removeAttr("data-state");
-            selectedShow.campared = false;
+            // Start Recursively loading seasons
+            loadSeason(selectedShow.id, 1);
         }
     }
 
-    pageContent.canvas.update();
+    /**
+     * Toggles the visibility of season data on the graph
+     *
+     * @param seasonIndex The desired season
+     * @param [qDisplay] The container of the season, if not present it is pulled from the DOM
+     * @param [state] The state in which to force the element
+     */
+    function toggleSeasonGraph(seasonIndex, qDisplay, state) {
 
-}
+        // Pulls the container for the season if not given
+        qDisplay = qDisplay == undefined ? $(seasonList.find(".episode")[seasonIndex]) : qDisplay;
+
+        // Displays the season on the graph
+        if (state == "selected" || (state == undefined && !selectedShow.seasons[seasonIndex].active)) {
+
+            if (state == undefined && selectedShow.seasons[seasonIndex].active) {
+
+                return;
+            }
+
+            qDisplay.attr("data-state", "selected");
+
+            selectedShow.seasons[seasonIndex].active = true;
+
+            // Caculat vot average for the season if not already calculated
+            if (selectedShow.seasons[seasonIndex].vote_average == undefined) {
+
+                selectedShow.seasons[seasonIndex].vote_average = 0;
+
+                for (let episodeIndex = 0; episodeIndex < selectedShow.seasons[seasonIndex].episodes.length; ++episodeIndex) {
+
+                    selectedShow.seasons[seasonIndex].vote_average += selectedShow.seasons[seasonIndex].episodes[episodeIndex].vote_average;
+                }
+            }
+
+            let insertIndex = 0;
+
+            // find the position in which to insert the graph data
+            for (let labelIndex = 0; labelIndex < pageContent.canvas.data.labels.length; ++labelIndex) {
+
+                if (seasonIndex > pageContent.canvas.data.labels[labelIndex] - 1) {
+
+                    insertIndex = labelIndex + 1;
+                }
+            }
+
+            // Check if graph data is already present
+            if (seasonIndex + 1 != pageContent.canvas.data.labels[insertIndex]) {
+
+                pageContent.canvas.data.labels.splice(insertIndex, 0, seasonIndex + 1);
+                pageContent.canvas.data.datasets[0].data.splice(insertIndex, 0, selectedShow.seasons[seasonIndex].vote_average);
+                ++selectedShow.compareCount;
+            }
+
+            // Selects "compare all" if all seasons are selected
+            if (selectedShow.compareCount >= selectedShow.seasons.length) {
+
+                pageContent.posterContainer.attr("data-state", "selected");
+                selectedShow.campared = true;
+            }
+        } else {
+
+            if (state == undefined && !selectedShow.seasons[seasonIndex].active) {
+
+                return;
+            }
+
+            qDisplay.removeAttr("data-state");
+
+            selectedShow.seasons[seasonIndex].active = false;
+
+            if (pageContent.canvas.data.labels == undefined) {
+
+                return;
+            }
+
+            // Find the position in which to delete the graph data
+            for (let labelIndex = 0; labelIndex < pageContent.canvas.data.labels.length; ++labelIndex) {
+
+                if (pageContent.canvas.data.labels[labelIndex] == seasonIndex + 1) {
+
+                    pageContent.canvas.data.labels.splice(labelIndex, 1);
+                    pageContent.canvas.data.datasets[0].data.splice(labelIndex, 1);
+                    --selectedShow.compareCount;
+
+                    break;
+                }
+            }
+
+            // Deselects "compare all" if not all seasons are selected
+            if (selectedShow.compareCount == selectedShow.seasons.length - 1) {
+
+                pageContent.posterContainer.removeAttr("data-state");
+                selectedShow.campared = false;
+            }
+        }
+
+        pageContent.canvas.update();
+
+    }
+})();
