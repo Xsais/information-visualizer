@@ -206,13 +206,18 @@ $(document).ready(function () {
             var comingweek = [];
             for (i = 4; i < data.cnt; i += 8) {
                 fivedaydata.push(data.list[i].main.temp);
-                console.log(data.list[i].rain);
-                if (!data.list[i].rain['3h']){
+                // console.log(data.list[i].rain);
+                try{
+                    raindata.push(data.list[i].rain['3h'] || 0);
+                }catch(e){
                     raindata.push(0);
                 }
-                else{
-                    raindata.push(data.list[i].rain['3h']);
-                }
+                // if (!data.list[i].rain['3h']){
+                //     raindata.push(0);
+                // }
+                // else{
+                    
+                // }
             }
             console.log('RAIN', raindata);
 
