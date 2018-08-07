@@ -183,12 +183,23 @@ $(document).ready(function () {
     function loadChart(lat, long) {
         // $('#chart').css('background-color', 'white')
         $.getJSON('http://api.openweathermap.org/data/2.5/forecast?lat=' + lat + '&lon=' + long + '&appid=337f84fa35fa79d1a7e6bdfa3a1003ac&units=metric', {}, function (data) {
+            console.log(data);
+            if(data)
             var wholedata = data.list;
             var fivedaydata = [];
+            var raindata = [];
             var comingweek = [];
             for (i = 4; i < data.cnt; i += 8) {
                 fivedaydata.push(data.list[i].main.temp);
+                console.log(data.list[i].rain);
+                if (!data.list[i].rain['3h']){
+                    raindata.push(0);
+                }
+                else{
+                    raindata.push(data.list[i].rain['3h']);
+                }
             }
+            console.log('RAIN', raindata);
 
             var ctx = document.getElementById('weatherchart').getContext('2d');
             var chart = new Chart(ctx, {
@@ -204,6 +215,14 @@ $(document).ready(function () {
                             borderColor: $('#extrainfo').css('color'),
                             fill: false,
                             type: 'line'
+                        },
+                        {
+                            label: 'Temperature',
+                            yAxisID: 'rainY',
+                            data: raindata,
+                            borderColor: $('#extrainfo').css('color'),
+                            fill: false,
+                            type: 'bar'
                         },
                     ]
                 },
@@ -227,7 +246,16 @@ $(document).ready(function () {
                                     return value + '°C';
                                 }
                             }
-                        },]
+                        },
+                        {
+                            id: 'rainY',
+                            position: 'right',
+                            ticks: {
+                                callback: function (value, index, values) {
+                                    return value+' mm';
+                                }
+                            }
+                    },]
                     }
                 }
             });
