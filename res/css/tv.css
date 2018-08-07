@@ -1,14 +1,3 @@
-div[data-role="header"] {
-
-    background-color: rgb(33, 33, 33) !important;
-    margin: 0;
-    padding: 0;
-    border: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
 div[data-role="header"][data-state~='scrolled'] {
 
     background-color: rgba(33, 33, 33, 0.75) !important
@@ -18,17 +7,6 @@ div[data-role="header"] > div > img {
 
     width: 7vh;
     transform: translate(0, 35%);
-}
-
-div[data-role="header"] a {
-
-    margin: 0 2rem;
-    color: #FFFFFF !important;
-}
-
-div[data-role="header"] a:visited {
-
-    color: inherit;
 }
 
 div[data-role="content"] {
@@ -72,7 +50,7 @@ div[data-role="content"] .image[data-state~="no-image"]:before {
     width: 100%;
     display: block;
     content: " ";
-    background: url(../icon/image.png) no-repeat #212121 50% 30%;
+    background: url(../images/image.png) no-repeat #212121 50% 30%;
     background-size: 4rem;
 }
 
@@ -276,7 +254,7 @@ div[data-role="content"] > .info.page > .info.list .episode > .holder.image[data
     width: 100%;
     display: block;
     content: " ";
-    background: url(../icon/image.png) no-repeat #212121 50% 45%;
+    background: url(../images/image.png) no-repeat #212121 50% 45%;
     background-size: 4rem;
 }
 
@@ -320,7 +298,7 @@ div[data-role="content"] > .info.page > .info.list .episode:hover:before
     display: block;
     width: 100%;
     height: 100%;
-    background: url(../icon/check_0.png) no-repeat 95% 92.5%;
+    background: url(../images/check_0.png) no-repeat 95% 92.5%;
     cursor: pointer;
 }
 
@@ -328,7 +306,7 @@ div[data-role="content"] > .info.page > .info.list .episode[data-state~="selecte
 , div[data-role="content"] > .info.page .holder.show[data-state~="selected"]:before
 {
 
-    background: url(../icon/check_1.png) no-repeat 95% 92.5%;
+    background: url(../images/check_1.png) no-repeat 95% 92.5%;
 }
 
 div[data-role="content"] > .info.page > .info.list .episode > .info.title  {

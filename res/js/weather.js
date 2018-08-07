@@ -1,3 +1,18 @@
+/**
+ * File: weather.js
+ * Assignment: Final Project
+ * Creation date: August 1, 2018
+ * Last Modified: August 6, 2018
+ * Description: Handles display and graphing of weather data
+ *
+ * GitHub Link: https://github.com/Xsais/information-visualizer/blob/master/res/js/weather.js
+ *
+ * Group Members:
+ *    - James Grau
+ *    - Bhavay Grover
+ *    - Nathaniel PrimoS
+ */
+
 function intiMap() { } // global declaration because google maps js script looks for initMap() before document is ready
 function loadExtraInfo() { }
 
@@ -123,23 +138,23 @@ $(document).ready(function () {
 
             if (iconid[iconid.length - 1] == 'd') {
                 try {
-                    $('#weather').css('background-image', 'url("./images/backgrounds/day/' + weatherImagesIcons[iconindex][0] + '")');
-                    $('#icon').attr('src', './images/icons/day/' + weatherImagesIcons[iconindex][1]);
-                    img.setAttribute('src', "./images/backgrounds/day/" + weatherImagesIcons[iconindex][0]);
+                    $('#weather').css('background-image', 'url("../res/images/backgrounds/day/' + weatherImagesIcons[iconindex][0] + '")');
+                    $('#icon').attr('src', '../res/images/icons/day/' + weatherImagesIcons[iconindex][1]);
+                    img.setAttribute('src', "../res/images/backgrounds/day/" + weatherImagesIcons[iconindex][0]);
                 } catch (e) {
-                    $('#weather').css('background-image', 'url("./images/backgrounds/day/clear.png")');
-                    $('#icon').attr('src', './images/icons/day/clear.png');
-                    img.setAttribute('src', "./images/backgrounds/day/clear.png");
+                    $('#weather').css('background-image', 'url("../res/images/backgrounds/day/clear.png")');
+                    $('#icon').attr('src', '../res/images/icons/day/clear.png');
+                    img.setAttribute('src', "../res/images/backgrounds/day/clear.png");
                 }
             } else {
                 try {
-                    $('#weather').css('background-image', 'url("./images/backgrounds/night/' + weatherImagesIcons[iconindex][0] + '")');
-                    $('#icon').attr('src', './images/icons/night/' + weatherImagesIcons[iconindex][1]);
-                    img.setAttribute('src', "./images/backgrounds/night/" + weatherImagesIcons[iconindex][0]);
+                    $('#weather').css('background-image', 'url("../res/images/backgrounds/night/' + weatherImagesIcons[iconindex][0] + '")');
+                    $('#icon').attr('src', '../res/images/icons/night/' + weatherImagesIcons[iconindex][1]);
+                    img.setAttribute('src', "../res/images/backgrounds/night/" + weatherImagesIcons[iconindex][0]);
                 } catch (e) {
-                    $('#weather').css('background-image', 'url("./images/backgrounds/night/clear.png")');
-                    $('#icon').attr('src', './images/icons/night/clear.png');
-                    img.setAttribute('src', "./images/backgrounds/day/clear.png");
+                    $('#weather').css('background-image', 'url("../res/images/backgrounds/night/clear.png")');
+                    $('#icon').attr('src', '../res/images/icons/night/clear.png');
+                    img.setAttribute('src', "../res/images/backgrounds/day/clear.png");
                 }
             }
 
@@ -282,15 +297,15 @@ $(document).ready(function () {
                 var icon;
                 if (iconid[iconid.length - 1] == 'd') {
                     try {
-                        icon = './images/icons/day/' + weatherImagesIcons[iconindex][1];
+                        icon = '../res/images/icons/day/' + weatherImagesIcons[iconindex][1];
                     } catch (e) {
-                        icon = './images/icons/day/clear.png';
+                        icon = '../res/images/icons/day/clear.png';
                     }
                 } else {
                     try {
-                        icon = './images/icons/night/' + weatherImagesIcons[iconindex][1];
+                        icon = '../res/images/icons/night/' + weatherImagesIcons[iconindex][1];
                     } catch (e) {
-                        icon = './images/icons/night/clear.png';
+                        icon = '../res/images/icons/night/clear.png';
                     }
                 }
                 var resultdiv = "<div onClick='loadExtraInfo(" + JSON.stringify(data) + ", " + index + ");' style='padding-top: " + divlocs[index] + "px; padding-right: 16px; padding-left: 16px;' id='c" + index + "'>" +
