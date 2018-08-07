@@ -1,3 +1,8 @@
+div[data-role="header"] {
+
+    background-color: rgb(33, 33, 33) !important;
+}
+
 div[data-role="header"][data-state~='scrolled'] {
 
     background-color: rgba(33, 33, 33, 0.75) !important
