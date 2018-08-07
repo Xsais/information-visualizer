@@ -182,6 +182,7 @@ $(document).ready(function () {
         });
     }
 
+    
     function nextFiveDays() {
         var ar = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
         var today = new Date().getDay();
@@ -220,6 +221,7 @@ $(document).ready(function () {
                 // }
             }
             console.log('RAIN', raindata);
+            console.log(hexToRgbA(window.swatchcolor));
 
             var ctx = document.getElementById('weatherchart').getContext('2d');
             var chart = new Chart(ctx, {
@@ -237,10 +239,11 @@ $(document).ready(function () {
                             type: 'line'
                         },
                         {
-                            label: 'Temperature',
+                            label: 'Rain',
                             yAxisID: 'rainY',
                             data: raindata,
-                            borderColor: $('#extrainfo').css('color'),
+                            backgroundColor: ''+hexToRgbA(window.swatchcolor)+ '',
+                            borderColor: $('#extrainfo').css('color'),//$('#extrainfo').css('color'),
                             fill: false,
                             type: 'bar'
                         },
@@ -371,6 +374,20 @@ $(document).ready(function () {
 
     loadExtraInfo = function (data, index) {
         // does nothing for now
+    }
+
+    // hexToRgbA() taken from https://stackoverflow.com/questions/21646738/convert-hex-to-rgba
+    function hexToRgbA(hex) {
+        var c;
+        if (/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) {
+            c = hex.substring(1).split('');
+            if (c.length == 3) {
+                c = [c[0], c[0], c[1], c[1], c[2], c[2]];
+            }
+            c = '0x' + c.join('');
+            return 'rgba(' + [(c >> 16) & 255, (c >> 8) & 255, c & 255].join(',') + ',0.5)';
+        }
+        throw new Error('Bad Hex');
     }
 
 });
