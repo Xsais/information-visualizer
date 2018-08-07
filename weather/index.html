@@ -8,7 +8,9 @@
     <script src="../res/js/lib/jquery.min.js"></script>
     <script src="../res/js/lib/jqery-mobile.min.js"></script>
     <script src="../res/js/lib/chart.min.js"></script>
-    <script src="./Vibrant.js"></script>
+    <script src="../res/js/lib/vibrant.js"></script>
+    <script src="../res/js/header.js"></script>
+    <link rel="stylesheet" href="../res/css/header.css">
     <style>
         html,
         body {
@@ -36,13 +38,34 @@
             display:hidden;
         }
     </style>
+
+    <link rel="apple-touch-icon" sizes="57x57" href="../res/images/favicons/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="../res/images/favicons/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="../res/images/favicons/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="../res/images/favicons/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="../res/images/favicons/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="../res/images/favicons/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="../res/images/favicons/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="../res/images/favicons/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../res/images/favicons/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="../res/images/favicons/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../res/images/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="../res/images/favicons/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../res/images/favicons/favicon-16x16.png">
+    <link rel="manifest" href="../res/images/favicons/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="../res/images/favicons/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
 </head>
 
 <body >
     <div data-transition='slide' id="weather" data-role="page" data-title="weather visualizer" style="background-repeat: no-repeat; background-size: auto; -webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;">
         <div id='header' data-role="header">
-            <h1 style="white-space: normal !important; margin: 0 !important; padding-right: 10px; padding-left: 10px;">
-                <span id='weatherin'></span> - Weather</h1>
+            <a data-role="none" data-folder="tv">TV</a>
+            <div>
+                <img src="../res/images/favicon.png"/>
+            </div>
+            <a data-role="none" data-folder="stock">Stock</a>
         </div>
 
         <div id='bd' data-role="content" style="padding: 0; padding-top: 16px; height: 100%;">
@@ -51,7 +74,7 @@
             </div>
 
             <div class='results' style="padding-top: 16px; padding-right: 16px; padding-left: 16px;">
-                <img id='icon' src='./images/icons/day/clear.png' width="110" height="110" style="float: left;" />
+                <img id='icon' src='../res/images/icons/day/clear.png' width="110" height="110" style="float: left;" />
 
                 <div style="float: right; text-align: right;">
                     <span style="display: block; font-size: 25px;" id="description">Clear sky</span>
@@ -117,7 +140,7 @@
 
     </div>
 
-    <script src="./weather.js"></script>
+    <script src="../res/js/weather.js"></script>
 
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBXHwslEixns_oNow3E5BBbnF0l4qjJnqY&libraries=places&callback=initMap"
         async defer></script>

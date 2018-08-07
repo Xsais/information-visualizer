@@ -1,0 +1,28 @@
+div[data-role="header"] {
+
+    background-color: rgb(33, 33, 33) !important;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+div[data-role="header"] a {
+
+    margin: 0 2rem;
+    text-decoration: none;
+    color: #FFFFFF !important;
+    cursor: pointer;
+}
+
+div[data-role="header"] a:hover {
+
+    transform: scale(0.975);
+}
+
+div[data-role="header"] a:visited {
+
+    color: inherit;
+}

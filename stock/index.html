@@ -1,0 +1,483 @@
+<!--
+	File: ./stock/index.html
+	Developer: James Grau
+	Student Number: 991443203
+	Date: August 9, 2018
+-->
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>Stock Viewer</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no">
+
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" />
+		<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.11.1/build/css/alertify.min.css"/>
+		<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.11.1/build/css/themes/bootstrap.min.css"/>
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" />
+		<style>
+			@media only screen and (min-width: 1050px) {
+				canvas {
+					max-width: 100%;
+				}
+			}
+		</style>
+
+		<link rel="apple-touch-icon" sizes="57x57" href="../res/images/favicons/apple-icon-57x57.png">
+		<link rel="apple-touch-icon" sizes="60x60" href="../res/images/favicons/apple-icon-60x60.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="../res/images/favicons/apple-icon-72x72.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="../res/images/favicons/apple-icon-76x76.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="../res/images/favicons/apple-icon-114x114.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="../res/images/favicons/apple-icon-120x120.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="../res/images/favicons/apple-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="../res/images/favicons/apple-icon-152x152.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="../res/images/favicons/apple-icon-180x180.png">
+		<link rel="icon" type="image/png" sizes="192x192"  href="../res/images/favicons/android-icon-192x192.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="../res/images/favicons/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="96x96" href="../res/images/favicons/favicon-96x96.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="../res/images/favicons/favicon-16x16.png">
+		<link rel="manifest" href="../res/images/favicons/manifest.json">
+		<meta name="msapplication-TileColor" content="#ffffff">
+		<meta name="msapplication-TileImage" content="../res/images/favicons/ms-icon-144x144.png">
+		<meta name="theme-color" content="#ffffff">
+	</head>
+
+	<body class="bg-light">
+		<nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-2">
+			<a class="navbar-brand" href="index.html">Stock Viewer</a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			
+			<div class="collapse navbar-collapse" id="navbarSupportedContent">
+				<ul class="navbar-nav mr-auto">
+					<li class="nav-item active">
+						<a class="nav-link" href="#"><i class="fas fa-home"></i> Home <span class="sr-only">(current)</span></a>
+					</li>
+					<li class="nav-item"><a class="nav-link" href="../index.html"><i class="fas fa-tachometer-alt"></i> Dashboard </a></li>
+					<li class="nav-item"><a class="nav-link" href="../tv/index.html"><i class="fas fa-tv"></i> TV Shows</a></li>
+					<li class="nav-item"><a class="nav-link" href="../weather/index.html"><i class="fas fa-cloud"></i> Weather</a></li>
+				</ul>
+
+				<div class="form-inline my-2 my-lg-0">
+					<input class="form-control mr-sm-2" type="text" placeholder="Stock Name/Ticker" list="stockTickerList" id="quickStockSearchInput" style="text-transform: uppercase" />
+					
+					<datalist id="stockTickerList"></datalist>
+
+					<button class="btn btn-success my-2 my-sm-0" id="viewQuickStock">View <i class="far fa-eye"></i></button>
+				</div>
+			</div>
+		</nav>
+
+
+		<div class="container-fluid">
+			<div class="row justify-content-md-center" id="mainStocks"><div class="text-center">Oops...  Looks like you do not follow any stock.  Please view and add a stock to your list.</div></div>
+		</div>
+
+
+		<div class="modal" tabindex="-1" role="dialog" id="stockQuickView">
+			<div class="modal-dialog modal-lg" role="document">
+				<div class="modal-content">
+					<div class="modal-header"><h2 class="modal-title" id="quickStock-title"></h2><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>
+
+					<div class="modal-body" id="quickStock-body">
+						<div id="quickChartContainer">
+							<div class="modal-header pt-0 pb-2 mb-2">
+								<h5 class="modal-title" id="quickChartTitle"></h5>
+							</div>
+
+							<div id="quickChart"></div>
+						</div>						
+
+						<div class="modal-header pt-0 pb-2 mb-2">
+							<h5 class="modal-title">News</h5>
+						</div>
+
+						<div class="list-group" id="quickStockNews"></div>
+					</div>
+
+					<div class="modal-footer">
+						<div class="btn-group">
+							<button type="button" class="btn btn-success" id="quickAddStock">Add Stock To List <i class="fas fa-plus"></i></button>
+							<button type="button" class="btn btn-primary" data-dismiss="modal">Close <i class="fas fa-times"></i></button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+		<script src="//cdn.jsdelivr.net/npm/alertifyjs@1.11.1/build/alertify.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timeago/1.6.3/jquery.timeago.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/mouse0270-bootstrap-notify/3.1.7/bootstrap-notify.js"></script>
+		
+		<script>
+			// Set all Chart font color and axis lines to white
+			Chart.defaults.global.defaultFontColor = 'white';
+			Chart.defaults.scale.gridLines.color = "rgba(255, 255, 255, 0.5)";			
+			
+			// Variable to store if the user supports webstorage or not
+			var localStorageSupported = false;
+
+			// Setup Page loading event
+			$(document).ready(function() {
+				// Initialize timeago
+				$("time.timeago").timeago();
+
+				// Check if the user can support webstorage
+				if (typeof(Storage) !== "undefined") {
+					// Define local storage supported as true
+					localStorageSupported = true;
+				}
+
+				// Set the ticker input options
+				$.getJSON("tickers.json", function(data) {
+					// Loop through the ticker JSON file and fill the input with options
+					$.each(data.tickers, function(key, value) {
+						$("#stockTickerList").append('<option value="' + value.Ticker + '">' + value.Name + '</option>');
+					});
+				});
+
+				// Perform action when user would like to view a stock quickly
+				$("#viewQuickStock").click(function(data) {
+					// Call the perform StockLookup function
+					stockLookUp();
+				});
+				
+				// Perform the lookup of stock when the user hits enter
+				$('#quickStockSearchInput').keypress(function (e) {
+					// Check if the enter key was pressed
+					if (e.which == 13) {
+						// Call the perform StockLookup function
+						stockLookUp();
+					}
+				});
+
+				// Perform action when user adds stock to their list
+				$("#quickAddStock").click(function(data){
+					// Check if the user already has stored items in storage
+					if(localStorage.getItem("savedStocks") === null) {
+						// Add the stock option to the users saved list
+						localStorage.setItem("savedStocks", '{"0":"' + $("#quickStockSearchInput").val().toUpperCase() + '"}');
+					}else{
+						// Check if the item is already in storage
+						if(localStorage.getItem("savedStocks").indexOf('"' + $("#quickStockSearchInput").val().toUpperCase() + '"') < 0) {
+							// Grab the saved stocks
+							var savedStocks = JSON.parse(localStorage.getItem("savedStocks"));
+
+							// Add the new stock ticker to the list
+							savedStocks[(Object.keys(savedStocks).length)] = $("#quickStockSearchInput").val().toUpperCase();
+
+							// Set the localstorage to reflect the changes
+							localStorage.setItem("savedStocks", JSON.stringify(savedStocks));
+						}
+
+						// Toggle the modal
+						$('#stockQuickView').modal('toggle');
+
+						// Display notification on success add
+						$.notify({
+							title: "<strong>Success!</strong>",
+							message: "You have added that Stock Ticker (" + $("#quickStockSearchInput").val().toUpperCase() + ") to your list. (Refreshing in 5 seconds)"
+						},{
+							type: 'success',
+							placement: {
+								from: 'bottom',
+								align: 'center'
+							},
+							timer: '5000',
+							animation: {
+								enter: 'animated fadeInDown',
+								exit: 'animated fadeOutUp ' 
+							},
+							onClose: function() {
+								// Refresh the Page
+								location.reload();
+							}
+						});
+
+						// Hide add Button from modal
+						$('#quickAddStock').hide();
+					}
+				});
+
+				// Store the saves stock tickers from local storage into a local variable
+				var savedStocks = JSON.parse(localStorage.getItem("savedStocks"));
+				
+				// Check if there is any saved stocks
+				if(savedStocks != null) {
+					// Remove all html from main area
+					$("#mainStocks").html("");
+
+					// Set the ticker input options
+					for(tickerId in savedStocks) {					
+						// Grab the data for the desired stock
+						$.getJSON("https://api.iextrading.com/1.0/stock/" + savedStocks[tickerId] + "/batch?types=quote,chart&range=1d", function(data) {
+							// Setting up the main stocks area
+							$("#mainStocks").append('<div class="col-lg-3"><div class="card text-white bg-dark mb-2"><div class="card-header">' + data.quote.companyName + " (" + data.quote.symbol + ')</div><div class="card-body"><div class="card-text" id="' + data.quote.symbol + 'StockChartArea"></div></div></div></div>');
+							
+							// Store the needed variables
+							var lablePoints = new Array();
+							var dataPoints = new Array();
+
+							// Loop through the chart data
+							for(chart in data.chart) {
+								// Add the label and data points to its respective arrays
+								lablePoints.push(data.chart[chart].minute);
+								dataPoints.push((data.chart[chart].open === undefined) ? dataPoints[(dataPoints.length - 1)] : data.chart[chart].open);							
+							}
+
+							// Dynamically create the chart in the DOM
+							$('<canvas>').attr({id: data.quote.symbol + 'StockChart'}).appendTo('#' + data.quote.symbol + 'StockChartArea');
+
+							// Create the needed cor variables
+							var backgroundColor, borderColor;
+
+							// Compare the current stock price to its open price and set the correct color
+							if(data.quote.iexRealtimePrice >= data.quote.open) {
+								// Set the positive colors
+								backgroundColor = 'rgba(40, 167, 69, 0.4)';
+								borderColor = 'rgba(25, 105, 44, 1)';
+							}else{
+								// Set the negative colors
+								backgroundColor = 'rgba(220, 53, 69, 0.4)';
+								borderColor = 'rgba(167, 29, 42, 1)';
+							}
+
+							// Addin the chart data
+							var ctx = document.getElementById(data.quote.symbol + 'StockChart').getContext('2d');
+							var myChart = new Chart(ctx, {
+								type: 'line',
+								data: {
+									labels: lablePoints,
+									datasets: [{
+										label: new Date(String(data.chart[(data.chart.length - 1)].date).substr(0, 4) + "-" + String(data.chart[(data.chart.length - 1)].date).substr(4, 2) + "-" + String(data.chart[(data.chart.length - 1)].date).substr(6, 2)).toDateString() + ' as of ' + data.chart[(data.chart.length - 1)].label,
+										data: dataPoints,
+										backgroundColor: backgroundColor,
+										borderColor: borderColor,
+										borderWidth: 1
+									}]
+								},
+								options: {
+									responsive:true,
+									scaleBeginAtZero:false,
+									barBeginAtOrigin:true,
+									scales: [{
+										xAxes: [{
+											type: 'time',
+											ticks: {
+												autoSkip: true,
+												maxTicksLimit: 10
+											}
+										}]							
+									}]
+								}
+							});
+
+							// Append the extra information to the div
+							$('#' + data.quote.symbol + 'StockChartArea').append('<ul class="list-group list-group-flush" id="' + data.quote.symbol + 'ExtraInformation"></ul>');
+							$('#' + data.quote.symbol + 'ExtraInformation').append('<li class="list-group-item bg-transparent text-success"><span class="float-left"><b>High:</b> <i class="fas fa-sort-up"></i> $' + Math.round(data.quote.high, 2).toFixed(2) + '</span> <span class="float-right"><b>Week 52 High:</b> <i class="fas fa-sort-up"></i> $' + Math.round(data.quote.week52High, 2).toFixed(2) + '</span></li>');
+							$('#' + data.quote.symbol + 'ExtraInformation').append('<li class="list-group-item bg-transparent text-danger"><span class="float-left"><b>Low:</b> <i class="fas fa-sort-up"></i> $' + Math.round(data.quote.low, 2).toFixed(2) + '</span> <span class="float-right"><b>Week 52 Low:</b> <i class="fas fa-sort-up"></i> $' + Math.round(data.quote.week52Low, 2).toFixed(2) + '</span></li>');
+							$('#' + data.quote.symbol + 'ExtraInformation').append('<li class="list-group-item bg-transparent"><span class="float-left">Open:</b> $' + Math.round(data.quote.open, 2).toFixed(2) + '</span></li>');
+							
+							// Check if the market has closed
+							if(data.chart[(data.chart.length - 1)].label == "3:59 PM") { 
+								// Add Closing Time when the market closed
+								$('#' + data.quote.symbol + 'ExtraInformation').append('<li class="list-group-item bg-transparent">Close:</b> $' + Math.round(data.quote.close, 2).toFixed(2) + '</li>');
+							}
+						});
+					};
+				}
+
+				// Set a refresh interval
+				if(localStorage.getItem('savedStocks') != null) { // Check if the user has saved stocks
+					// Setup and interval timer to reload page
+					setInterval(function() {
+						// Check if the user has the modal closed
+						if((($("#stockQuickView").data('bs.modal') || {})._isShown) === false || (($("#stockQuickView").data('bs.modal') || {})._isShown) === undefined) {
+							// Display notification before reload
+							$.notify({
+								message: "Page reloading in <span id='reloadingTimer'>5</span> seconds"
+							},{
+								placement: {
+									from: 'bottom',
+									align: 'right'
+								},
+								timer: '4000',
+								animation: {
+									enter: 'animated fadeInDown',
+								},
+								onShow: function() {
+									// Create needed varaible and interval timer
+									var secondsTillRefresh = 5;
+									var refreshTimer = setInterval(function() {
+										// Set the timer countdown text
+										$('#reloadingTimer').text(--secondsTillRefresh);
+
+										// Check if the timer has finished
+										if(secondsTillRefresh <= 0) {
+											// Remove the counter
+											clearInterval(refreshTimer);
+										}
+									}, 1000);
+								},
+								onClose: function() {
+									// Check if the user has the modal closed
+									if((($("#stockQuickView").data('bs.modal') || {})._isShown) === false || (($("#stockQuickView").data('bs.modal') || {})._isShown) === undefined) {
+										// Refresh the Page
+										location.reload();
+									}
+								}
+							});
+						}
+					}, 55000);
+				}
+			});			
+
+			// Function to perform the stock looup
+			function stockLookUp() {
+				// Show add Button from modal
+				$('#quickAddStock').show();
+
+				// Variable to hold the entered stock option
+				var stockSearch = String($("#quickStockSearchInput").val()).toUpperCase();
+
+				// Check if there is any value in the input field
+				if(stockSearch.length == 0) {
+					// Return to not process function any further
+					return;
+				}else if($("#stockTickerList option[value='" + stockSearch + "']").length == 0) { // Check to see if the user made a valid ticker choice
+					// Dispaly Error Message
+					alertify.alert('Invalid Stock Ticker', 'Oops... You entered an invlid Stock Ticker.  Please make sure that it it from the suggested list and try again.');
+
+					// Add btn class to alertify button
+					$(".ajs-button").addClass("btn btn-danger");
+
+					// Return to not process fuction any further
+					return;
+				}
+				
+				// Check if the user supports localstorage
+				if(localStorageSupported === false) {
+					// Check if the ticker storage is not null and already has the ticker in storage
+					if(localStorage.getItem("savedStocks") != null && localStorage.getItem("savedStocks").indexOf('"' + stockSearch + '"') > 0) {
+						// Remove the element from the dom
+						$("#quickAddStock").remove();
+					}
+				}
+
+				// Check if the user has entered a quick stock to view
+				if(stockSearch.trim() != "") {
+					// Grab the data for the desired stock
+					$.getJSON("https://api.iextrading.com/1.0/stock/" + stockSearch + "/batch?types=logo,quote,news", function(data) {
+						// Set the modal Title from the returned results
+						$("#quickStock-title").html("<img src='" + data.logo.url + "' style='max-height: 50px;' alt='" + data.quote.companyName + " Logo Image'/> " + data.quote.companyName + "  (" + data.quote.symbol + ")");
+						
+						// Set the Modal Body
+						$.each(data.news, function(key, value) {
+							$("#quickStockNews").append('<a href="' +  value.url + '" class="list-group-item list-group-item-action" target="_blank"><div class="d-flex w-100 justify-content-between"><h5 class="mb-1">' +  value.headline + ' <small>by ' + value.source + '</small></h5><small><time class="timeago" datetime="' + new Date(value.datetime).toISOString().toString().slice(0, -5) + '">' + new Date(value.datetime).toISOString().toString().slice(0, -5) + '</time></small></div><p class="mb-1">' + value.summary + '</p><small style="word-break: break-word;">' + value.related.replace(/,/g, ', ') + '</small><a href="' +  value.url + '" class="btn btn-primary float-right mb-2" style="border-top-left-radius: 0;border-top-right-radius: 0;" target="_blank">View</a></a>');
+
+							// Fix the Rendering for timeago
+							$("time.timeago").timeago();
+						});
+					});
+
+					// Initialize the chart
+					getQuickChartData();
+
+					// Toggle the modal
+					$('#stockQuickView').modal('toggle');
+				}
+
+				// Fucntion to set the chart on the quick popup
+				function getQuickChartData() {
+					// Fix the Rendering for timeago
+					$("time.timeago").timeago();
+
+					// Create needed variables
+					var labels = new Array();
+					var dataPoints = new Array();
+					
+					// Clear the previous chart
+					$("#quickChart").html("");
+					$("#quickChart").html("<canvas id='quickStockChart' class='bg-dark'></canvas>");
+
+					// Get and set hte chart information
+					$.getJSON("https://api.iextrading.com/1.0/stock/" + stockSearch + "/chart/1d", function(data) {
+						// Set the chart section title bar
+						$("#quickChartTitle").html(new Date(String(data[(data.length - 1)].date).substr(0, 4) + "-" + String(data[(data.length - 1)].date).substr(4, 2) + "-" + String(data[(data.length - 1)].date).substr(6, 2)).toDateString() + " Stock Chart <small class='text-muted'>as of <time class='timeago' datetime='" + String(data[(data.length - 1)].date).substr(0, 4) + "-" + String(data[(data.length - 1)].date).substr(4, 2) + "-" + String(data[(data.length - 1)].date).substr(6, 2) + "T" + data[(data.length - 1)].minute + "'>" + String(data[(data.length - 1)].date).substr(0, 4) + "-" + String(data[(data.length - 1)].date).substr(4, 2) + "-" + String(data[(data.length - 1)].date).substr(6, 2) + "T" + data[(data.length - 1)].minute + "</time></small>");
+
+						// Fix the Rendering for timeago
+						$("time.timeago").timeago();
+
+						// Clear the arrays
+						labels.length = 0;
+						dataPoints.length = 0;
+
+						// Loop through and add the items to the array
+						$.each(data, function(key, value) {
+							labels.push(value.minute);
+							dataPoints.push((value.open === undefined) ? dataPoints[(dataPoints.length - 1)] : value.open);
+						});
+
+						// Addin the chart data
+						var ctx = document.getElementById("quickStockChart").getContext('2d');
+						var myChart = new Chart(ctx, {
+							type: 'line',
+							data: {
+								labels: labels,//['09:30', '09:31', '09:32', '09:33', '09:34', '09:35', '09:36', '09:37', '09:38', '09:39', '09:40', '09:41', '09:42', '09:43', '09:44', '09:45', '09:46', '09:47', '09:48', '09:49', '09:50', '09:51', '09:52', '09:53', '09:54', '09:55', '09:56', '09:57', '09:58', '09:59', '10:00', '10:01', '10:02', '10:03', '10:04', '10:05', '10:06', '10:07', '10:08', '10:09', '10:10', '10:11', '10:12', '10:13', '10:14', '10:15', '10:16', '10:17', '10:18', '10:19', '10:20', '10:21', '10:22', '10:23', '10:24', '10:25', '10:26', '10:27', '10:28', '10:29', '10:30', '10:31', '10:32', '10:33', '10:34', '10:35', '10:36', '10:37', '10:38', '10:39', '10:40', '10:41', '10:42', '10:43', '10:44', '10:45', '10:46', '10:47', '10:48', '10:49', '10:50', '10:51', '10:52', '10:53', '10:54', '10:55', '10:56', '10:57', '10:58', '10:59', '11:00', '11:01', '11:02', '11:03', '11:04', '11:05', '11:06', '11:07', '11:08', '11:09', '11:10', '11:11', '11:12', '11:13', '11:14', '11:15', '11:16', '11:17', '11:18', '11:19', '11:20', '11:21', '11:22', '11:23', '11:24', '11:25', '11:26', '11:27', '11:28', '11:29', '11:30', '11:31', '11:32', '11:33', '11:34', '11:35', '11:36', '11:37', '11:38', '11:39', '11:40', '11:41', '11:42', '11:43', '11:44', '11:45', '11:46', '11:47', '11:48', '11:49', '11:50', '11:51', '11:52', '11:53', '11:54', '11:55', '11:56', '11:57', '11:58', '11:59', '12:00', '12:01', '12:02', '12:03', '12:04', '12:05', '12:06', '12:07', '12:08', '12:09', '12:10', '12:11', '12:12', '12:13', '12:14', '12:15', '12:16', '12:17', '12:18', '12:19', '12:20', '12:21', '12:22', '12:23', '12:24', '12:25', '12:26', '12:27', '12:28', '12:29', '12:30', '12:31', '12:32', '12:33', '12:34', '12:35', '12:36', '12:37', '12:38', '12:39', '12:40', '12:41', '12:42', '12:43', '12:44', '12:45', '12:46', '12:47', '12:48', '12:49', '12:50', '12:51', '12:52', '12:53', '12:54', '12:55', '12:56', '12:57', '12:58', '12:59', '13:00', '13:01', '13:02', '13:03', '13:04', '13:05', '13:06', '13:07', '13:08', '13:09', '13:10', '13:11', '13:12', '13:13', '13:14', '13:15', '13:16', '13:17', '13:18', '13:19', '13:20', '13:21', '13:22', '13:23', '13:24', '13:25', '13:26', '13:27', '13:28', '13:29', '13:30', '13:31', '13:32', '13:33', '13:34', '13:35', '13:36', '13:37', '13:38', '13:39', '13:40', '13:41', '13:42', '13:43', '13:44', '13:45', '13:46', '13:47', '13:48', '13:49', '13:50', '13:51', '13:52', '13:53', '13:54', '13:55', '13:56', '13:57', '13:58', '13:59', '14:00', '14:01', '14:02', '14:03', '14:04', '14:05', '14:06', '14:07', '14:08', '14:09', '14:10', '14:11', '14:12', '14:13', '14:14', '14:15', '14:16', '14:17', '14:18', '14:19', '14:20', '14:21', '14:22', '14:23', '14:24', '14:25', '14:26', '14:27', '14:28', '14:29', '14:30', '14:31', '14:32', '14:33', '14:34', '14:35', '14:36', '14:37', '14:38', '14:39', '14:40', '14:41', '14:42', '14:43', '14:44', '14:45', '14:46', '14:47', '14:48', '14:49', '14:50', '14:51', '14:52', '14:53', '14:54', '14:55', '14:56', '14:57', '14:58', '14:59', '15:00', '15:01', '15:02', '15:03', '15:04', '15:05', '15:06', '15:07', '15:08', '15:09', '15:10', '15:11', '15:12', '15:13', '15:14', '15:15', '15:16', '15:17', '15:18', '15:19', '15:20', '15:21', '15:22', '15:23', '15:24', '15:25', '15:26', '15:27', '15:28', '15:29', '15:30', '15:31', '15:32', '15:33', '15:34', '15:35', '15:36', '15:37', '15:38', '15:39', '15:40', '15:41', '15:42', '15:43', '15:44', '15:45', '15:46', '15:47', '15:48', '15:49', '15:50', '15:51', '15:52', '15:53', '15:54', '15:55', '15:56', '15:57', '15:58', '15:59'],
+								datasets: [{
+									label: 'Stock',
+									data: dataPoints,
+									backgroundColor: 'rgba(0, 86, 179, 0.2)',
+									borderColor: '#007bff',
+									borderWidth: 1
+								}]
+							},
+							options: {
+								responsive:true,
+								scaleBeginAtZero:false,
+								barBeginAtOrigin:true,
+								scales: [{
+									xAxes: [{
+										type: 'time',
+										ticks: {
+											autoSkip: true,
+											maxTicksLimit: 10,
+											fontColor: 'black'
+										}
+									}]					
+								}]
+							}
+						});
+
+						// Refresh data on chart every min
+						setInterval(function() { updateQuickChartData(myChart, stockSearch); }, 60000);
+					});
+
+					// Fix the Rendering for timeago
+					$("time.timeago").timeago();
+				}
+
+				// Function to update the chart data
+				function updateQuickChartData(chart, ticker) {
+					// Get update the chart with the new data
+					$.getJSON("https://api.iextrading.com/1.0/stock/" + ticker + "/chart/1d", function(data) {
+						// Push the label to the chart
+						chart.data.labels.push(data[data.length - 1].minute);
+						
+						// Push the data point to the chart
+						chart.data.datasets[0].data.push((data[data.length - 1].open === undefined) ? chart.data.dataset.data[(chart.data.dataset.data.length - 1)] : data[data.length - 1].open);						
+
+						// Update the chart
+						chart.update();
+					});
+				}
+			}
+		</script>
+	</body>
+</html>
