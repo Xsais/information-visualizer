@@ -21,6 +21,6 @@ $(function() {
     // Allows user to navigate pages
     $("div[data-role='header'] a[data-folder]").on("click", function () {
 
-        window.location.href = `../${$(this).attr("data-folder")}`;
+        window.location.href = `../${$(this).attr("data-folder")}/index.html`;
     });
 })

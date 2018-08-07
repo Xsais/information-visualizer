@@ -123,6 +123,7 @@ $(document).ready(function () {
 
     function loadWeather(lat, long) {
         $.getJSON('http://api.openweathermap.org/data/2.5/weather?lat=' + lat + '&lon=' + long + '&appid=337f84fa35fa79d1a7e6bdfa3a1003ac&units=metric', {}, function (data) {
+            console.log(data);
             if ($('#searchbar').val() == '') {
                 $('#searchbar').val(data.name + ', ' + data.sys.country);
             }
@@ -163,8 +164,8 @@ $(document).ready(function () {
             $('#humidity').text(extrainfo[1] + '%');
             $('#wind').text('Speed - ' + extrainfo[2]);
             $('#pressure').text(extrainfo[3] + 'hpa');
-            $('#sunrise').text(new Date(extrainfo[4]).toTimeString().slice(0, 5));
-            $('#sunset').text(new Date(extrainfo[5]).toTimeString().slice(0, 5));
+            $('#sunrise').text(new Date(extrainfo[4]*1000).toTimeString().slice(0, 5));
+            $('#sunset').text(new Date(extrainfo[5]*1000).toTimeString().slice(0, 5));
 
             img.addEventListener('load', function () {
                 var vibrant = new Vibrant(img);
