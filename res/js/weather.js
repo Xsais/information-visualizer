@@ -59,14 +59,14 @@ $(document).ready(function () {
     initMap = function () {
         updateColors();
 
-        var autocomplete = new google.maps.places.Autocomplete(document.getElementById('searchbar'));
+        var autocomplete = new google.maps.places.Autocomplete(document.getElementById('searchbar'), { types: ['(cities)'],});
         google.maps.event.addListener(autocomplete, 'place_changed', () => {
             lat = autocomplete.getPlace().geometry.location.lat();
             long = autocomplete.getPlace().geometry.location.lng();
             loadWeather(lat, long);
         });
 
-        var s1autocomplete = new google.maps.places.Autocomplete(document.getElementById('searchbar1'));
+        var s1autocomplete = new google.maps.places.Autocomplete(document.getElementById('searchbar1'),{ types: ['(cities)'], });
         google.maps.event.addListener(s1autocomplete, 'place_changed', () => {
             lat = s1autocomplete.getPlace().geometry.location.lat();
             long = s1autocomplete.getPlace().geometry.location.lng();
@@ -74,7 +74,7 @@ $(document).ready(function () {
             compareNow();
         });
 
-        var s2autocomplete = new google.maps.places.Autocomplete(document.getElementById('searchbar2'));
+        var s2autocomplete = new google.maps.places.Autocomplete(document.getElementById('searchbar2'), { types: ['(cities)'], });
         google.maps.event.addListener(s2autocomplete, 'place_changed', () => {
             lat = s2autocomplete.getPlace().geometry.location.lat();
             long = s2autocomplete.getPlace().geometry.location.lng();
@@ -82,7 +82,7 @@ $(document).ready(function () {
             compareNow();
         });
 
-        var s3autocomplete = new google.maps.places.Autocomplete(document.getElementById('searchbar3'));
+        var s3autocomplete = new google.maps.places.Autocomplete(document.getElementById('searchbar3'), { types: ['(cities)'], });
         google.maps.event.addListener(s3autocomplete, 'place_changed', () => {
             lat = s3autocomplete.getPlace().geometry.location.lat();
             long = s3autocomplete.getPlace().geometry.location.lng();
